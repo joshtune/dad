@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Slideshow Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f12; --panel: #16181d; --panel2: #1c1f26; --line: #2a2e37;
+    --ink: #e8eaed; --dim: #9aa0ab; --accent: #d9c9a3; --accent2: #6ea8fe;
+    --danger: #e5736b; --ok: #5dca8a; --radius: 10px;
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 14px; }
+  h1,h2,h3 { font-weight: 600; }
+  a { color: var(--accent2); }
+  button { font-family: var(--font); cursor: pointer; }
+  input, textarea, select {
+    width: 100%; background: var(--panel2); border: 1px solid var(--line); color: var(--ink);
+    border-radius: 8px; padding: 9px 11px; font-family: var(--font); font-size: 14px; outline: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent2); }
+  textarea { resize: vertical; min-height: 38px; }
+  label { display: block; font-size: 12px; color: var(--dim); margin: 0 0 5px; font-weight: 500; }
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; }
+
+  /* layout */
+  header {
+    position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px;
+    padding: 12px 20px; background: rgba(14,15,18,.92); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  header .title { font-size: 15px; font-weight: 700; letter-spacing: .02em; }
+  header .spacer { flex: 1; }
+  .btn {
+    border: 1px solid var(--line); background: var(--panel2); color: var(--ink);
+    padding: 9px 15px; border-radius: 8px; font-weight: 500; font-size: 13px; transition: all .15s;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .btn:hover { border-color: var(--dim); }
+  .btn.primary { background: var(--accent); color: #1a1408; border-color: var(--accent); font-weight: 600; }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn.ghost { background: transparent; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  main { display: grid; grid-template-columns: minmax(380px, 1fr) minmax(380px, 1fr); gap: 0; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } .preview-pane { display: none; } }
+  .editor { padding: 20px; max-width: 760px; }
+  .preview-pane {
+    position: sticky; top: 57px; height: calc(100vh - 57px); border-left: 1px solid var(--line);
+    background: #000; display: flex; flex-direction: column;
+  }
+  .preview-pane .pv-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  .preview-pane .pv-head .lbl { font-size: 12px; color: var(--dim); flex: 1; }
+  .preview-frame-wrap { flex: 1; position: relative; background: #000; }
+  iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+  .card > h2 { margin: 0 0 14px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); }
+  .field { margin-bottom: 12px; }
+  .field:last-child { margin-bottom: 0; }
+  .hint { font-size: 12px; color: var(--dim); margin-top: 5px; line-height: 1.4; }
+
+  /* slide list */
+  .slide {
+    background: var(--panel2); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .slide.section { border-left: 3px solid var(--accent); }
+  .slide.photo   { border-left: 3px solid var(--accent2); }
+  .slide.video   { border-left: 3px solid #b98cf0; }
+  .slide .thumb {
+    width: 76px; height: 76px; border-radius: 7px; background: #000 center/cover no-repeat;
+    flex: 0 0 auto; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--dim); overflow: hidden; text-align: center;
+  }
+  .slide .body { flex: 1; min-width: 0; }
+  .slide .toprow { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+  .slide .type-badge {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em; padding: 3px 8px;
+    border-radius: 999px; background: rgba(255,255,255,.06); color: var(--dim); font-weight: 600;
+  }
+  .slide .num { font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .slide .ctrls { margin-left: auto; display: flex; gap: 4px; }
+  .iconbtn {
+    width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel);
+    color: var(--dim); font-size: 13px; display: inline-flex; align-items: center; justify-content: center; transition: all .15s;
+  }
+  .iconbtn:hover { color: var(--ink); border-color: var(--dim); }
+  .iconbtn.del:hover { color: #fff; background: var(--danger); border-color: var(--danger); }
+  .addrow { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--panel2); border: 1px solid var(--line); padding: 12px 18px; border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.5); z-index: 50; transition: transform .3s; max-width: 90vw;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.ok { border-color: var(--ok); } .toast.err { border-color: var(--danger); }
+  .toast a { color: var(--accent); }
+
+  details.adv { margin-top: 2px; }
+  details.adv summary { cursor: pointer; color: var(--dim); font-size: 12px; padding: 4px 0; }
+  .keyhint { font-size: 12px; color: var(--dim); }
+  .pill { font-size: 11px; padding: 2px 7px; border-radius: 999px; background: rgba(255,255,255,.06); color: var(--dim); }
+  code { background: var(--panel2); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <span class="title">🎬 Slideshow Editor</span>
+  <span class="pill" id="savePill">saved</span>
+  <span class="spacer"></span>
+  <button class="btn ghost" id="btnImport" title="Reload from media.json">↻ Load current</button>
+  <button class="btn ghost" id="btnDownload">⤓ Download JSON</button>
+  <button class="btn" id="btnPreview">▷ Preview</button>
+  <button class="btn primary" id="btnPublish">⬆ Publish</button>
+</header>
+
+<main>
+  <div class="editor">
+    <!-- Title / branding -->
+    <div class="card">
+      <h2>Title screen &amp; branding</h2>
+      <div class="field"><label>Occasion (small kicker)</label><input id="t_occasion" placeholder="A Tribute to Dad"></div>
+      <div class="field"><label>Name / headline (large)</label><input id="t_name" placeholder="John Tune"></div>
+      <div class="field"><label>Subtitle</label><input id="t_subtitle" placeholder="Forty Years · 1985 – 2025"></div>
+    </div>
+
+    <!-- Soundtrack + timing -->
+    <div class="card">
+      <h2>Soundtrack &amp; timing</h2>
+      <div class="field">
+        <label>Music URL (plays over the whole show, including videos)</label>
+        <input id="t_music" placeholder="https://…/song.mp3">
+        <div class="hint">Must be a direct link to an <code>.mp3</code>/<code>.m4a</code> file. Leave blank for no music.</div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Seconds per photo</label><input id="t_photoDur" type="number" min="1" step="0.5" value="7"></div>
+        <div class="field"><label>Seconds per chapter card</label><input id="t_sectionDur" type="number" min="1" step="0.5" value="4.5"></div>
+      </div>
+    </div>
+
+    <!-- Slides -->
+    <div class="card">
+      <h2>Slides <span class="pill" id="slideCount">0</span></h2>
+      <div id="slideList"></div>
+      <div class="addrow">
+        <button class="btn" data-add="photo">＋ Photo</button>
+        <button class="btn" data-add="video">＋ Video</button>
+        <button class="btn" data-add="section">＋ Chapter card</button>
+      </div>
+    </div>
+
+    <!-- End screen -->
+    <div class="card">
+      <h2>End screen</h2>
+      <div class="field"><label>Heading</label><input id="e_heading" placeholder="We Love You, Dad"></div>
+      <div class="field"><label>Subtitle</label><input id="e_subtitle" placeholder="With Love, Always"></div>
+    </div>
+
+    <!-- Publish settings -->
+    <div class="card">
+      <h2>Publish to GitHub</h2>
+      <div class="row">
+        <div class="field"><label>Owner (username/org)</label><input id="g_owner" placeholder="your-username"></div>
+        <div class="field"><label>Repository</label><input id="g_repo" placeholder="dad"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Branch</label><input id="g_branch" placeholder="main" value="main"></div>
+        <div class="field"><label>Path</label><input id="g_path" placeholder="media.json" value="media.json"></div>
+      </div>
+      <div class="field">
+        <label>GitHub personal-access token</label>
+        <input id="g_token" type="password" placeholder="github_pat_… (stored only in this browser)">
+        <div class="hint">
+          Create a <b>fine-grained token</b> with <b>Contents: Read &amp; write</b> on this one repo:
+          <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">github.com/settings/personal-access-tokens/new</a>.
+          It’s saved only in your browser’s localStorage and sent directly to GitHub — never to anyone else.
+        </div>
+      </div>
+      <details class="adv">
+        <summary>Also publish index.html &amp; the player files (first-time setup)</summary>
+        <div class="field" style="margin-top:10px">
+          <label><input type="checkbox" id="g_pushIndex" style="width:auto;display:inline;margin-right:6px">Push <code>index.html</code> too on next publish</label>
+          <div class="hint">Use this the first time so the live player matches this editor. After that, leave it off — publishing only updates <code>media.json</code>.</div>
+        </div>
+      </details>
+    </div>
+
+    <p class="keyhint">Everything autosaves to this browser as you type. Use <b>Download JSON</b> for a manual backup, or <b>Publish</b> to push live.</p>
+  </div>
+
+  <div class="preview-pane">
+    <div class="pv-head">
+      <span class="lbl">Live preview (muted)</span>
+      <button class="btn ghost" id="btnPvRefresh" style="padding:6px 11px">↻ Refresh</button>
+      <button class="btn ghost" id="btnPvTab" style="padding:6px 11px">↗ Full preview</button>
+    </div>
+    <div class="preview-frame-wrap"><iframe id="pvFrame" title="preview"></iframe></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s) => document.querySelector(s);
+  const LS = "slideshow_editor_state";
+  const LS_GH = "slideshow_gh_settings";
+
+  // ---------- state ----------
+  let state = {
+    title: { occasion: "", name: "", subtitle: "" },
+    music: "", photoDuration: 7, sectionDuration: 4.5,
+    slides: [],
+    end: { heading: "", subtitle: "" }
+  };
+
+  function blankSlide(type) {
+    if (type === "section") return { type: "section", title: "", subtitle: "" };
+    return { type, url: "", date: "", caption: "" };
+  }
+
+  // ---------- load saved / existing ----------
+  function init() {
+    const saved = localStorage.getItem(LS);
+    if (saved) { try { state = Object.assign(state, JSON.parse(saved)); } catch (e) {} }
+    loadGh();
+    bindHeaderFields();
+    renderAll();
+    refreshPreview();
+    // If nothing saved yet, try pulling the live media.json as a starting point.
+    if (!saved) importCurrent(true);
+  }
+
+  // ---------- header (title/music/timing/end) field binding ----------
+  function bindHeaderFields() {
+    const map = [
+      ["t_occasion", () => state.title, "occasion"],
+      ["t_name", () => state.title, "name"],
+      ["t_subtitle", () => state.title, "subtitle"],
+      ["t_music", () => state, "music"],
+      ["e_heading", () => state.end, "heading"],
+      ["e_subtitle", () => state.end, "subtitle"],
+    ];
+    map.forEach(([id, obj, key]) => {
+      const el = $("#" + id);
+      el.addEventListener("input", () => { obj()[key] = el.value; touch(); });
+    });
+    $("#t_photoDur").addEventListener("input", (e) => { state.photoDuration = parseFloat(e.target.value) || 7; touch(); });
+    $("#t_sectionDur").addEventListener("input", (e) => { state.sectionDuration = parseFloat(e.target.value) || 4.5; touch(); });
+  }
+
+  function syncHeaderFields() {
+    $("#t_occasion").value = state.title.occasion || "";
+    $("#t_name").value = state.title.name || "";
+    $("#t_subtitle").value = state.title.subtitle || "";
+    $("#t_music").value = state.music || "";
+    $("#t_photoDur").value = state.photoDuration ?? 7;
+    $("#t_sectionDur").value = state.sectionDuration ?? 4.5;
+    $("#e_heading").value = state.end.heading || "";
+    $("#e_subtitle").value = state.end.subtitle || "";
+  }
+
+  // ---------- slide list render ----------
+  function renderSlides() {
+    const list = $("#slideList");
+    list.innerHTML = "";
+    $("#slideCount").textContent = state.slides.length;
+    state.slides.forEach((s, i) => list.appendChild(slideEl(s, i)));
+  }
+
+  function slideEl(s, i) {
+    const wrap = document.createElement("div");
+    wrap.className = "slide " + s.type;
+
+    // thumbnail
+    const thumb = document.createElement("div");
+    thumb.className = "thumb";
+    if (s.type === "photo" && s.url) { thumb.style.backgroundImage = `url("${s.url.replace(/"/g, '%22')}")`; }
+    else if (s.type === "video") thumb.textContent = "▶ video";
+    else if (s.type === "section") thumb.textContent = "❖ chapter";
+    else thumb.textContent = "photo";
+    wrap.appendChild(thumb);
+
+    const body = document.createElement("div");
+    body.className = "body";
+
+    const top = document.createElement("div");
+    top.className = "toprow";
+    top.innerHTML = `<span class="type-badge">${s.type}</span><span class="num">#${i + 1}</span>`;
+    const ctrls = document.createElement("div");
+    ctrls.className = "ctrls";
+    ctrls.append(
+      iconBtn("↑", "Move up", () => move(i, -1)),
+      iconBtn("↓", "Move down", () => move(i, 1)),
+      iconBtn("⧉", "Duplicate", () => dup(i)),
+      iconBtn("✕", "Delete", () => del(i), "del"),
+    );
+    top.appendChild(ctrls);
+    body.appendChild(top);
+
+    if (s.type === "section") {
+      body.appendChild(field("Chapter title", s.title || "", (v) => { s.title = v; touch(true); }, "input", "The Early Years"));
+      body.appendChild(field("Subtitle / era", s.subtitle || "", (v) => { s.subtitle = v; touch(true); }, "input", "1955 – 1975"));
+    } else {
+      body.appendChild(field(s.type === "video" ? "Video URL" : "Photo URL", s.url || "",
+        (v) => { s.url = v; if (s.type === "photo") thumb.style.backgroundImage = `url("${v.replace(/"/g,'%22')}")`; touch(true); },
+        "input", "https://…"));
+      const r = document.createElement("div"); r.className = "row";
+      r.appendChild(field("Date / year", s.date || "", (v) => { s.date = v; touch(true); }, "input", "1985"));
+      body.appendChild(r);
+      r.appendChild(field("Caption", s.caption || "", (v) => { s.caption = v; touch(true); }, "input", "Optional caption"));
+    }
+
+    wrap.appendChild(body);
+    return wrap;
+  }
+
+  function field(labelText, value, onInput, tag = "input", placeholder = "") {
+    const f = document.createElement("div"); f.className = "field";
+    const l = document.createElement("label"); l.textContent = labelText; f.appendChild(l);
+    const el = document.createElement(tag); el.value = value; el.placeholder = placeholder;
+    el.addEventListener("input", () => onInput(el.value));
+    f.appendChild(el);
+    return f;
+  }
+
+  function iconBtn(txt, title, fn, cls = "") {
+    const b = document.createElement("button"); b.className = "iconbtn " + cls; b.textContent = txt; b.title = title;
+    b.addEventListener("click", fn); return b;
+  }
+
+  // ---------- slide ops ----------
+  function add(type) { state.slides.push(blankSlide(type)); touch(); renderSlides(); }
+  function del(i) { state.slides.splice(i, 1); touch(); renderSlides(); }
+  function dup(i) { state.slides.splice(i + 1, 0, JSON.parse(JSON.stringify(state.slides[i]))); touch(); renderSlides(); }
+  function move(i, d) {
+    const j = i + d; if (j < 0 || j >= state.slides.length) return;
+    const t = state.slides[i]; state.slides[i] = state.slides[j]; state.slides[j] = t; touch(); renderSlides();
+  }
+
+  // ---------- persistence ----------
+  let saveTimer = null, pvTimer = null;
+  function touch(rerenderPreviewOnly) {
+    localStorage.setItem(LS, JSON.stringify(state));
+    flashPill();
+    clearTimeout(pvTimer); pvTimer = setTimeout(refreshPreview, 700); // debounce live preview
+    if (!rerenderPreviewOnly) {} // slide list already re-rendered by caller when needed
+  }
+  function flashPill() {
+    const p = $("#savePill"); p.textContent = "saving…"; p.style.color = "var(--accent)";
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => { p.textContent = "saved ✓"; p.style.color = "var(--ok)"; }, 350);
+  }
+
+  function renderAll() { syncHeaderFields(); renderSlides(); }
+
+  // ---------- build clean media.json ----------
+  function buildMedia() {
+    const m = {
+      title: trimObj({ occasion: state.title.occasion, name: state.title.name, subtitle: state.title.subtitle }),
+      music: state.music || "",
+      photoDuration: Number(state.photoDuration) || 7,
+      sectionDuration: Number(state.sectionDuration) || 4.5,
+      slides: state.slides.map(s => {
+        if (s.type === "section") return trimObj({ type: "section", title: s.title, subtitle: s.subtitle });
+        return trimObj({ type: s.type, url: s.url, date: s.date, caption: s.caption });
+      }),
+      end: trimObj({ heading: state.end.heading, subtitle: state.end.subtitle })
+    };
+    return m;
+  }
+  function trimObj(o) { const r = {}; for (const k in o) if (o[k] !== "" && o[k] != null) r[k] = o[k]; return r; }
+
+  // ---------- preview ----------
+  function refreshPreview() {
+    try { localStorage.setItem("slideshow_preview", JSON.stringify(buildMedia())); } catch (e) {}
+    const f = $("#pvFrame");
+    f.src = "index.html?preview=1&t=" + (f.dataset.n = (+(f.dataset.n || 0) + 1));
+  }
+  $("#btnPvRefresh").addEventListener("click", refreshPreview);
+  $("#btnPreview").addEventListener("click", refreshPreview);
+  $("#btnPvTab").addEventListener("click", () => {
+    localStorage.setItem("slideshow_preview", JSON.stringify(buildMedia()));
+    window.open("index.html?preview=1&t=" + Date.now(), "_blank");
+  });
+
+  // ---------- download ----------
+  $("#btnDownload").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(buildMedia(), null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "media.json"; a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  // ---------- import existing media.json ----------
+  $("#btnImport").addEventListener("click", () => importCurrent(false));
+  async function importCurrent(silent) {
+    try {
+      const res = await fetch("media.json?t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const m = await res.json();
+      state = {
+        title: { occasion: m.title?.occasion || "", name: m.title?.name || m.title?.heading || "", subtitle: m.title?.subtitle || "" },
+        music: m.music || "", photoDuration: m.photoDuration ?? 7, sectionDuration: m.sectionDuration ?? 4.5,
+        slides: (m.slides || []).map(s => s.type === "section"
+          ? { type: "section", title: s.title || "", subtitle: s.subtitle || "" }
+          : { type: s.type || "photo", url: s.url || "", date: s.date || s.year || "", caption: s.caption || "" }),
+        end: { heading: m.end?.heading || "", subtitle: m.end?.subtitle || "" }
+      };
+      localStorage.setItem(LS, JSON.stringify(state));
+      renderAll(); refreshPreview();
+      if (!silent) toast("Loaded current media.json", "ok");
+    } catch (e) {
+      if (!silent) toast("Couldn’t load media.json — " + e.message, "err");
+    }
+  }
+
+  // ---------- GitHub publish ----------
+  const ghFields = ["g_owner", "g_repo", "g_branch", "g_path", "g_token"];
+  function loadGh() {
+    let g = {}; try { g = JSON.parse(localStorage.getItem(LS_GH) || "{}"); } catch (e) {}
+    ghFields.forEach(id => { if (g[id] != null) $("#" + id).value = g[id]; });
+    ghFields.forEach(id => $("#" + id).addEventListener("input", saveGh));
+  }
+  function saveGh() {
+    const g = {}; ghFields.forEach(id => g[id] = $("#" + id).value); localStorage.setItem(LS_GH, JSON.stringify(g));
+  }
+
+  function b64(str) { return btoa(unescape(encodeURIComponent(str))); }
+
+  async function ghPut(path, contentStr, token, owner, repo, branch, message) {
+    const api = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g, "/")}`;
+    const headers = { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+    let sha;
+    const getRes = await fetch(api + "?ref=" + encodeURIComponent(branch), { headers });
+    if (getRes.ok) sha = (await getRes.json()).sha;
+    else if (getRes.status !== 404) throw new Error("GitHub read failed (" + getRes.status + "): " + (await safeMsg(getRes)));
+    const body = { message, content: b64(contentStr), branch };
+    if (sha) body.sha = sha;
+    const putRes = await fetch(api, { method: "PUT", headers, body: JSON.stringify(body) });
+    if (!putRes.ok) throw new Error("GitHub write failed (" + putRes.status + "): " + (await safeMsg(putRes)));
+    return putRes.json();
+  }
+  async function safeMsg(res) { try { return (await res.json()).message || res.statusText; } catch (e) { return res.statusText; } }
+
+  $("#btnPublish").addEventListener("click", async () => {
+    const owner = $("#g_owner").value.trim(), repo = $("#g_repo").value.trim();
+    const branch = ($("#g_branch").value.trim() || "main"), path = ($("#g_path").value.trim() || "media.json");
+    const token = $("#g_token").value.trim();
+    if (!owner || !repo || !token) { toast("Fill in owner, repository, and token first.", "err"); return; }
+    if (!state.slides.length) { toast("Add at least one slide before publishing.", "err"); return; }
+
+    const btn = $("#btnPublish"); btn.disabled = true; const orig = btn.textContent; btn.textContent = "Publishing…";
+    try {
+      const json = JSON.stringify(buildMedia(), null, 2);
+      await ghPut(path, json, token, owner, repo, branch, "Update slideshow via editor");
+
+      if ($("#g_pushIndex").checked) {
+        const idxRes = await fetch("index.html?t=" + Date.now(), { cache: "no-store" });
+        if (idxRes.ok) {
+          await ghPut("index.html", await idxRes.text(), token, owner, repo, branch, "Publish slideshow player");
+        }
+      }
+      const url = `https://${owner}.github.io/${repo}/`;
+      toast(`Published! Live in ~1 min at <a href="${url}" target="_blank">${url}</a>`, "ok", 9000);
+    } catch (e) {
+      toast("Publish failed: " + e.message, "err", 8000);
+      console.error(e);
+    } finally { btn.disabled = false; btn.textContent = orig; }
+  });
+
+  // ---------- add buttons ----------
+  document.querySelectorAll("[data-add]").forEach(b => b.addEventListener("click", () => add(b.dataset.add)));
+
+  // ---------- toast ----------
+  let toastTimer = null;
+  function toast(html, kind = "", ms = 4000) {
+    const t = $("#toast"); t.innerHTML = html; t.className = "toast show " + kind;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), ms);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

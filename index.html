@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Slideshow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fade: 1400ms;          /* cinematic crossfade */
+    --kb: 1.12;              /* Ken Burns max zoom */
+    --ink: #f4f1ea;
+    --accent: #d9c9a3;       /* warm off-white gold for the thin accent line */
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%; background: #000; color: var(--ink);
+    font-family: var(--font); overflow: hidden; -webkit-font-smoothing: antialiased;
+  }
+  #app { position: fixed; inset: 0; }
+
+  /* ---- media stage (two crossfading layers) ---- */
+  .stage { position: absolute; inset: 0; background: #000; overflow: hidden; }
+  .layer {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity var(--fade) cubic-bezier(.4,0,.2,1);
+  }
+  .layer.active { opacity: 1; }
+  .layer img, .layer video {
+    max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;
+    will-change: transform;
+  }
+  /* Ken Burns — gentle, varied by index. Animation duration is set inline. */
+  .kb-0 { animation: kb0 linear both; }
+  .kb-1 { animation: kb1 linear both; }
+  .kb-2 { animation: kb2 linear both; }
+  .kb-3 { animation: kb3 linear both; }
+  @keyframes kb0 { from { transform: scale(1)            translate(0,0); }        to { transform: scale(var(--kb)) translate(-1.5%,-1%); } }
+  @keyframes kb1 { from { transform: scale(var(--kb))    translate(1.5%,1%); }    to { transform: scale(1)          translate(0,0); } }
+  @keyframes kb2 { from { transform: scale(1.04)         translate(2%,-1.5%); }   to { transform: scale(var(--kb)) translate(-1%,1.5%); } }
+  @keyframes kb3 { from { transform: scale(var(--kb))    translate(-2%,1%); }     to { transform: scale(1.02)       translate(1%,-1%); } }
+
+  /* ---- cinematic vignette / letterbox feel for legibility ---- */
+  .stage::before, .stage::after {
+    content: ""; position: absolute; left: 0; right: 0; height: 22vh; z-index: 3; pointer-events: none;
+  }
+  .stage::before { top: 0;    background: linear-gradient(rgba(0,0,0,.55), transparent); }
+  .stage::after  { bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,.72)); }
+
+  /* ---- caption block (lower-left, thin uppercase, date + accent line) ---- */
+  #meta {
+    position: absolute; left: 6vw; bottom: 8vh; z-index: 6; max-width: 60%;
+    padding-left: 22px; border-left: 1px solid var(--accent);
+    transition: opacity 700ms ease; transform: translateY(0);
+  }
+  #meta.hidden { opacity: 0; }
+  #meta .date {
+    font-weight: 300; font-size: clamp(13px, 1.5vw, 18px); letter-spacing: .35em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: .5em;
+  }
+  #meta .cap {
+    font-weight: 200; font-size: clamp(20px, 3.2vw, 46px); line-height: 1.15; letter-spacing: .02em;
+  }
+
+  /* ---- cards: title screen, section dividers, end ---- */
+  .card { text-align: center; padding: 6vmin; max-width: 92%; }
+  .card .kicker {
+    font-weight: 300; letter-spacing: .5em; text-transform: uppercase;
+    font-size: clamp(12px, 1.6vw, 18px); color: var(--accent); margin-bottom: 1.4em;
+  }
+  .card h1 {
+    font-weight: 200; font-size: clamp(34px, 8vw, 110px); margin: 0; line-height: 1.05;
+    letter-spacing: .01em;
+  }
+  .card .sub {
+    font-weight: 300; font-size: clamp(15px, 2.4vw, 30px); margin-top: 1em; opacity: .8;
+    letter-spacing: .15em; text-transform: uppercase;
+  }
+  /* fade-up entrance for card text */
+  .card > * { animation: rise 1400ms cubic-bezier(.2,.7,.2,1) both; }
+  .card > *:nth-child(2) { animation-delay: 180ms; }
+  .card > *:nth-child(3) { animation-delay: 340ms; }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+  /* ---- top progress bar + counter ---- */
+  #progress {
+    position: absolute; top: 0; left: 0; height: 2px; width: 0%; z-index: 8;
+    background: var(--accent); transition: width var(--fade) cubic-bezier(.4,0,.2,1);
+  }
+  #counter {
+    position: absolute; top: 18px; right: 22px; z-index: 8; font-variant-numeric: tabular-nums;
+    font-weight: 300; letter-spacing: .2em; font-size: 13px; opacity: .6;
+    transition: opacity 500ms ease;
+  }
+
+  /* ---- nav zones ---- */
+  .navzone { position: absolute; top: 0; bottom: 12vh; width: 22%; z-index: 4; cursor: pointer; }
+  .navzone.left { left: 0; } .navzone.right { right: 0; }
+
+  /* ---- control bar ---- */
+  #controls {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: center; gap: 14px; padding: 20px;
+    transition: opacity 600ms ease;
+  }
+  #controls.idle, #counter.idle { opacity: 0; }
+  button.ctrl {
+    appearance: none; border: 1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.25);
+    color: var(--ink); width: 44px; height: 44px; border-radius: 50%; font-size: 16px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; transition: all 180ms; backdrop-filter: blur(6px);
+  }
+  button.ctrl:hover { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.4); }
+
+  /* ---- title / start overlay ---- */
+  #start {
+    position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; gap: 40px;
+    background: radial-gradient(circle at center, #141414, #000 70%);
+  }
+  #start.gone { animation: fadeOut 1200ms ease forwards; }
+  @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+  #startBtn {
+    appearance: none; border: 1px solid var(--accent); background: transparent; color: var(--accent);
+    font-family: var(--font); font-weight: 300; letter-spacing: .35em; text-transform: uppercase;
+    font-size: clamp(13px, 1.6vw, 17px); padding: 1.1em 2.4em; border-radius: 2px; cursor: pointer;
+    transition: all 220ms;
+  }
+  #startBtn:hover { background: var(--accent); color: #000; letter-spacing: .4em; }
+
+  #message { position: absolute; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center; padding: 8vmin; }
+  #message.show { display: flex; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="stage">
+    <div class="layer" id="layerA"></div>
+    <div class="layer" id="layerB"></div>
+  </div>
+
+  <div id="progress"></div>
+  <div id="counter" class="idle">– / –</div>
+
+  <div id="meta" class="hidden">
+    <div class="date"></div>
+    <div class="cap"></div>
+  </div>
+
+  <div class="navzone left"  id="navPrev"></div>
+  <div class="navzone right" id="navNext"></div>
+
+  <div id="controls" class="idle">
+    <button class="ctrl" id="btnPrev" title="Previous (←)">‹</button>
+    <button class="ctrl" id="btnPlay" title="Play / Pause (space)">❚❚</button>
+    <button class="ctrl" id="btnNext" title="Next (→)">›</button>
+    <button class="ctrl" id="btnMute" title="Mute / Unmute soundtrack">♪</button>
+    <button class="ctrl" id="btnFull" title="Fullscreen (f)">⤢</button>
+  </div>
+
+  <div id="start">
+    <div class="card">
+      <div class="kicker" id="startKicker"></div>
+      <h1 id="startTitle">Slideshow</h1>
+      <div class="sub" id="startSubtitle"></div>
+    </div>
+    <button id="startBtn">▶ Begin</button>
+  </div>
+
+  <div id="message"><div class="card"><h1 id="msgHeading">Loading…</h1><div class="sub" id="msgBody"></div></div></div>
+
+  <audio id="music" loop preload="auto"></audio>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s) => document.querySelector(s);
+  const layers = [$("#layerA"), $("#layerB")];
+  const meta = $("#meta"), metaDate = meta.querySelector(".date"), metaCap = meta.querySelector(".cap");
+  const music = $("#music");
+
+  let cfg = null, slides = [], idx = 0, activeLayer = 0;
+  let playing = true, timer = null, started = false;
+  let musicEnabled = false, muted = false;
+  const PHOTO_DEFAULT = 7, SECTION_DEFAULT = 4.5;
+  const PREVIEW = new URLSearchParams(location.search).get("preview") === "1";
+
+  async function load() {
+    if (PREVIEW) {
+      // Preview mode: render data the editor stashed in localStorage (unpublished).
+      try { cfg = JSON.parse(localStorage.getItem("slideshow_preview") || "null"); } catch (e) { cfg = null; }
+      if (!cfg) { showMessage("Nothing to preview yet", "Add some slides in the editor, then press Preview."); return; }
+    } else {
+      try {
+        const res = await fetch("media.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        cfg = await res.json();
+      } catch (err) {
+        showMessage("Couldn’t load media.json",
+          "Make sure media.json sits next to index.html, and run a local server (see README).");
+        console.error(err); return;
+      }
+    }
+    slides = (cfg.slides || []).map(normalize);
+    if (cfg.end) slides.push({ type: "end", heading: cfg.end.heading || "The End", caption: cfg.end.subtitle || "" });
+
+    const t = cfg.title || {};
+    $("#startKicker").textContent   = t.occasion || "";
+    $("#startTitle").textContent    = t.name || t.heading || "Slideshow";
+    $("#startSubtitle").textContent = t.subtitle || "";
+    document.title = t.name || t.heading || "Slideshow";
+
+    if (cfg.music) { music.src = cfg.music; musicEnabled = true; }
+    else { $("#btnMute").style.display = "none"; }
+
+    if (!slides.length) { showMessage("No slides yet", "Add photos or videos to the \"slides\" list in media.json."); return; }
+
+    if (PREVIEW) { muted = true; music.muted = true; $("#btnMute").style.opacity = .4; begin(); }
+  }
+
+  function normalize(s) {
+    const o = { caption: s.caption || "", date: s.date || s.year || "" };
+    if (s.type) o.type = s.type;
+    else o.type = /\.(mp4|webm|mov|m4v|ogg)(\?|$)/i.test(s.url || "") ? "video" : "photo";
+    o.url = s.url || "";
+    o.title = s.title || ""; o.subtitle = s.subtitle || "";
+    if (s.duration) o.duration = s.duration;
+    return o;
+  }
+
+  function render(i) {
+    clearTimer();
+    idx = (i + slides.length) % slides.length;
+    const slide = slides[idx];
+    const next = layers[1 - activeLayer];
+    next.innerHTML = "";
+
+    let el = null;
+    if (slide.type === "photo") {
+      el = document.createElement("img");
+      el.src = slide.url; el.alt = slide.caption || "";
+      const dur = (slide.duration || cfg.photoDuration || PHOTO_DEFAULT);
+      el.className = "kb-" + (idx % 4);
+      el.style.animationDuration = (dur + 2) + "s";
+      el.onerror = () => el.replaceWith(buildCard("", "Image unavailable", slide.url));
+    } else if (slide.type === "video") {
+      el = document.createElement("video");
+      el.src = slide.url; el.playsInline = true; el.controls = false; el.preload = "auto";
+      el.muted = true;                       // soundtrack plays over video
+      el.onended = () => { if (playing) next_(); };
+      el.onerror = () => { next.innerHTML = ""; next.appendChild(buildCard("", "Video unavailable", slide.url)); scheduleCard(); };
+    } else if (slide.type === "section") {
+      el = buildCard("Chapter", slide.title, slide.subtitle);
+    } else { // end
+      el = buildCard("", slide.heading, slide.caption);
+    }
+    if (el) next.appendChild(el);
+
+    next.classList.add("active");
+    layers[activeLayer].classList.remove("active");
+    activeLayer = 1 - activeLayer;
+
+    // caption / date — only for actual media
+    if ((slide.type === "photo" || slide.type === "video") && (slide.caption || slide.date)) {
+      metaDate.textContent = slide.date || "";
+      metaCap.textContent = slide.caption || "";
+      metaDate.style.display = slide.date ? "" : "none";
+      meta.classList.remove("hidden");
+    } else meta.classList.add("hidden");
+
+    $("#progress").style.width = (((idx + 1) / slides.length) * 100) + "%";
+    $("#counter").textContent = pad(idx + 1) + " / " + pad(slides.length);
+
+    if (slide.type === "video") {
+      const p = el.play(); if (p && p.catch) p.catch(() => {});
+    } else if (slide.type === "end") {
+      setPlaying(false);
+    } else if (playing) {
+      scheduleCard(slide.type === "section" ? (cfg.sectionDuration || SECTION_DEFAULT) : slide.duration);
+    }
+    preloadNext();
+  }
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+
+  function scheduleCard(secs) {
+    clearTimer();
+    const dur = (secs || cfg.photoDuration || PHOTO_DEFAULT) * 1000;
+    timer = setTimeout(next_, dur);
+  }
+
+  function buildCard(kicker, heading, sub) {
+    const d = document.createElement("div"); d.className = "card";
+    if (kicker) { const k = document.createElement("div"); k.className = "kicker"; k.textContent = kicker; d.appendChild(k); }
+    const h = document.createElement("h1"); h.textContent = heading || ""; d.appendChild(h);
+    if (sub) { const p = document.createElement("div"); p.className = "sub"; p.textContent = sub; d.appendChild(p); }
+    return d;
+  }
+
+  function preloadNext() {
+    const n = slides[(idx + 1) % slides.length];
+    if (n && n.type === "photo" && n.url) { const im = new Image(); im.src = n.url; }
+  }
+
+  function next_() { render(idx + 1); }
+  function prev_() { render(idx - 1); }
+  function userNav(dir) { setPlaying(false); dir > 0 ? next_() : prev_(); }
+
+  function setPlaying(on) {
+    playing = on;
+    $("#btnPlay").textContent = on ? "❚❚" : "▶";
+    const activeImg = layers[activeLayer].querySelector("img");
+    const activeVid = layers[activeLayer].querySelector("video");
+    if (on) {
+      if (activeImg) activeImg.style.animationPlayState = "running";
+      const slide = slides[idx];
+      if (slide && slide.type === "video" && activeVid) activeVid.play().catch(() => {});
+      else if (slide && slide.type !== "end") scheduleCard(slide.type === "section" ? (cfg.sectionDuration || SECTION_DEFAULT) : slide.duration);
+      if (musicEnabled && !muted && started) music.play().catch(() => {});
+    } else {
+      clearTimer();
+      if (activeImg) activeImg.style.animationPlayState = "paused";
+      if (activeVid) activeVid.pause();
+    }
+  }
+
+  function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
+
+  function toggleFullscreen() {
+    const el = document.documentElement;
+    if (!document.fullscreenElement) (el.requestFullscreen || el.webkitRequestFullscreen || (()=>{})).call(el);
+    else (document.exitFullscreen || document.webkitExitFullscreen || (()=>{})).call(document);
+  }
+
+  function begin() {
+    if (started) return;
+    started = true;
+    $("#start").classList.add("gone");
+    if (musicEnabled && !muted) music.play().catch(() => {});
+    setPlaying(true);
+    render(0);
+  }
+
+  function showMessage(h, b) { $("#msgHeading").textContent = h; $("#msgBody").textContent = b || ""; $("#message").classList.add("show"); }
+
+  $("#startBtn").addEventListener("click", begin);
+  $("#btnNext").addEventListener("click", () => userNav(1));
+  $("#btnPrev").addEventListener("click", () => userNav(-1));
+  $("#navNext").addEventListener("click", () => userNav(1));
+  $("#navPrev").addEventListener("click", () => userNav(-1));
+  $("#btnPlay").addEventListener("click", () => setPlaying(!playing));
+  $("#btnFull").addEventListener("click", toggleFullscreen);
+  $("#btnMute").addEventListener("click", () => {
+    muted = !muted; music.muted = muted; $("#btnMute").style.opacity = muted ? .4 : 1;
+    if (!muted && started) music.play().catch(() => {});
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!started && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); begin(); return; }
+    if (!started) return;
+    switch (e.key) {
+      case "ArrowRight": case "PageDown": e.preventDefault(); userNav(1); break;
+      case "ArrowLeft":  case "PageUp":   e.preventDefault(); userNav(-1); break;
+      case " ": e.preventDefault(); setPlaying(!playing); break;
+      case "f": case "F": toggleFullscreen(); break;
+    }
+  });
+
+  let idleTimer = null;
+  const ctr = [$("#controls"), $("#counter")];
+  function poke() {
+    ctr.forEach(c => c.classList.remove("idle"));
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => ctr.forEach(c => c.classList.add("idle")), 2800);
+  }
+  document.addEventListener("mousemove", poke);
+  document.addEventListener("touchstart", poke, { passive: true });
+
+  load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+{
+  "title": {
+    "occasion": "A Tribute to Dad",
+    "name": "John Tune",
+    "subtitle": "A Life in Pictures"
+  },
+
+  "music": "",
+
+  "photoDuration": 7,
+  "sectionDuration": 4.5,
+
+  "slides": [
+    { "type": "section", "title": "The Early Years", "subtitle": "1955 – 1975" },
+
+    {
+      "type": "photo",
+      "url": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=2400",
+      "date": "1962",
+      "caption": "Replace these examples with your own photos."
+    },
+    {
+      "type": "photo",
+      "url": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=2400",
+      "date": "1968",
+      "caption": "Add a date and a caption to each slide."
+    },
+
+    { "type": "section", "title": "Family & Career", "subtitle": "1985 – 2015" },
+
+    {
+      "type": "video",
+      "url": "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_1080_10s_1MB.mp4",
+      "date": "2003",
+      "caption": "Videos play with the soundtrack continuing over them."
+    },
+    {
+      "type": "photo",
+      "url": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=2400",
+      "date": "2011",
+      "caption": "Each photo gets a slow, subtle Ken Burns motion."
+    },
+
+    { "type": "section", "title": "Here's to What's Next", "subtitle": "2025 →" },
+
+    {
+      "type": "photo",
+      "url": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=2400",
+      "date": "2025",
+      "caption": "Cheers to the next chapter."
+    }
+  ],
+
+  "end": {
+    "heading": "We Love You, Dad",
+    "subtitle": "With Love, Always"
+  }
+}
