@@ -1,6 +1,6 @@
 /* Dad's Slideshow — service worker.
    Bump CACHE when app files change to roll out an update. */
-const CACHE = "dad-slideshow-v6";
+const CACHE = "dad-slideshow-v7";
 const CORE = [
   "admin.html",
   "index.html",

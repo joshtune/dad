@@ -201,7 +201,9 @@
       <div class="row">
         <div class="field"><label>Seconds per photo</label><input id="t_photoDur" type="number" min="1" step="0.5" value="7"></div>
         <div class="field"><label>Seconds per chapter card</label><input id="t_sectionDur" type="number" min="1" step="0.5" value="4.5"></div>
+        <div class="field"><label>Seconds per text / quote</label><input id="t_textDur" type="number" min="1" step="0.5" value="11"></div>
       </div>
+      <div class="hint">These are the defaults. Any slide can override them with its own <b>Custom seconds</b> field.</div>
     </div>
 
     <!-- Slides -->
@@ -306,6 +308,7 @@
     });
     $("#t_photoDur").addEventListener("input", (e) => { state.photoDuration = parseFloat(e.target.value) || 7; touch(); });
     $("#t_sectionDur").addEventListener("input", (e) => { state.sectionDuration = parseFloat(e.target.value) || 4.5; touch(); });
+    $("#t_textDur").addEventListener("input", (e) => { state.textDuration = parseFloat(e.target.value) || 11; touch(); });
   }
 
   function syncHeaderFields() {
@@ -315,6 +318,7 @@
     $("#t_music").value = state.music || "";
     $("#t_photoDur").value = state.photoDuration ?? 7;
     $("#t_sectionDur").value = state.sectionDuration ?? 4.5;
+    $("#t_textDur").value = state.textDuration ?? 11;
     $("#e_heading").value = state.end.heading || "";
     $("#e_subtitle").value = state.end.subtitle || "";
   }
@@ -367,6 +371,7 @@
       cb.querySelector("textarea").rows = 3;
       body.appendChild(cb);
       body.appendChild(field("Music from this chapter on (optional)", s.music || "", (v) => { s.music = v; touch(true); }, "input", "music-2.mp3 — fades from the previous track"));
+      body.appendChild(durationField(s));
     } else if (s.type === "text") {
       const r = document.createElement("div"); r.className = "row";
       r.appendChild(field("Kicker (small gold label)", s.kicker || "", (v) => { s.kicker = v; touch(true); }, "input", "To Our Dad"));
@@ -377,19 +382,24 @@
         (v) => { s.body = v; touch(true); }, "textarea", "You taught us by example.\n\nFaith comes first.");
       bf.querySelector("textarea").rows = 5;
       body.appendChild(bf);
+      body.appendChild(durationField(s));
     } else if (s.type === "quote") {
       const qf = field("Quote", s.quote || "", (v) => { s.quote = v; touch(true); }, "textarea", "Well done, thou good and faithful servant.");
       qf.querySelector("textarea").rows = 3;
       body.appendChild(qf);
-      body.appendChild(field("Attribution (optional)", s.attribution || "", (v) => { s.attribution = v; touch(true); }, "input", "Matthew 25:21"));
+      const r = document.createElement("div"); r.className = "row";
+      r.appendChild(field("Attribution (optional)", s.attribution || "", (v) => { s.attribution = v; touch(true); }, "input", "Matthew 25:21"));
+      r.appendChild(durationField(s));
+      body.appendChild(r);
     } else {
       body.appendChild(field(s.type === "video" ? "Video URL" : "Photo URL", s.url || "",
         (v) => { s.url = v; if (s.type === "photo") thumb.style.backgroundImage = `url("${v.replace(/"/g,'%22')}")`; touch(true); },
         "input", "https://…"));
       const r = document.createElement("div"); r.className = "row";
       r.appendChild(field("Date / year", s.date || "", (v) => { s.date = v; touch(true); }, "input", "1985"));
-      body.appendChild(r);
       r.appendChild(field("Caption", s.caption || "", (v) => { s.caption = v; touch(true); }, "input", "Optional caption"));
+      if (s.type !== "video") r.appendChild(durationField(s));   // videos always play in full
+      body.appendChild(r);
     }
 
     wrap.appendChild(body);
@@ -402,6 +412,16 @@
     const el = document.createElement(tag); el.value = value; el.placeholder = placeholder;
     el.addEventListener("input", () => onInput(el.value));
     f.appendChild(el);
+    return f;
+  }
+
+  // "Custom seconds" — blank means use the global default for that slide type.
+  function durationField(s) {
+    const f = field("Custom seconds (blank = default)", s.duration ?? "",
+      (v) => { const n = parseFloat(v); if (n > 0) s.duration = n; else delete s.duration; touch(true); },
+      "input", "default");
+    const el = f.querySelector("input");
+    el.type = "number"; el.min = "1"; el.step = "0.5";
     return f;
   }
 
@@ -447,19 +467,19 @@
         if (s.type === "section") {
           const body = (Array.isArray(s.body) ? s.body : String(s.body || "").split("\n"));
           while (body.length && body[body.length - 1].trim() === "") body.pop();
-          const o = trimObj({ type: "section", title: s.title, subtitle: s.subtitle, music: s.music });
+          const o = trimObj({ type: "section", title: s.title, subtitle: s.subtitle, music: s.music, duration: s.duration });
           if (body.length) o.body = body;
           return o;
         }
         if (s.type === "text") {
           const body = (Array.isArray(s.body) ? s.body : String(s.body || "").split("\n"));
           while (body.length && body[body.length - 1].trim() === "") body.pop(); // drop trailing blanks
-          const o = trimObj({ type: "text", kicker: s.kicker, heading: s.heading });
+          const o = trimObj({ type: "text", kicker: s.kicker, heading: s.heading, duration: s.duration });
           if (body.length) o.body = body;
           return o;
         }
-        if (s.type === "quote") return trimObj({ type: "quote", quote: s.quote, attribution: s.attribution });
-        return trimObj({ type: s.type, url: s.url, date: s.date, caption: s.caption });
+        if (s.type === "quote") return trimObj({ type: "quote", quote: s.quote, attribution: s.attribution, duration: s.duration });
+        return trimObj({ type: s.type, url: s.url, date: s.date, caption: s.caption, duration: s.duration });
       }),
       end: trimObj({ heading: state.end.heading, subtitle: state.end.subtitle })
     };
@@ -503,12 +523,13 @@
       title: { occasion: m.title?.occasion || "", name: m.title?.name || m.title?.heading || "", subtitle: m.title?.subtitle || "" },
       music: m.music || "", photoDuration: m.photoDuration ?? 7, sectionDuration: m.sectionDuration ?? 4.5, textDuration: m.textDuration ?? 11,
       slides: (m.slides || []).map(s => {
+        const dur = (typeof s.duration === "number" && s.duration > 0) ? { duration: s.duration } : {};
         if (s.type === "section") return { type: "section", title: s.title || "", subtitle: s.subtitle || "",
-          body: Array.isArray(s.body) ? s.body.join("\n") : (s.body || ""), music: s.music || "" };
+          body: Array.isArray(s.body) ? s.body.join("\n") : (s.body || ""), music: s.music || "", ...dur };
         if (s.type === "text") return { type: "text", kicker: s.kicker || "", heading: s.heading || "",
-          body: Array.isArray(s.body) ? s.body.join("\n") : (s.body || "") };
-        if (s.type === "quote") return { type: "quote", quote: s.quote || "", attribution: s.attribution || "" };
-        return { type: s.type || "photo", url: s.url || "", date: s.date || s.year || "", caption: s.caption || "" };
+          body: Array.isArray(s.body) ? s.body.join("\n") : (s.body || ""), ...dur };
+        if (s.type === "quote") return { type: "quote", quote: s.quote || "", attribution: s.attribution || "", ...dur };
+        return { type: s.type || "photo", url: s.url || "", date: s.date || s.year || "", caption: s.caption || "", ...dur };
       }),
       end: { heading: m.end?.heading || "", subtitle: m.end?.subtitle || "" }
     };
