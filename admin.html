@@ -120,6 +120,18 @@
   .pill { font-size: 11px; padding: 2px 7px; border-radius: 999px; background: rgba(255,255,255,.06); color: var(--dim); }
   code { background: var(--panel2); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
 
+  /* ---------- groups (chapter + its slides) ---------- */
+  .group { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 14px; overflow: hidden; background: rgba(255,255,255,.015); }
+  .group > .ghead {
+    display: flex; align-items: center; gap: 10px; padding: 11px 12px; background: var(--panel2);
+    cursor: pointer; user-select: none; -webkit-user-select: none;
+  }
+  .ghead .caret { color: var(--dim); font-size: 12px; width: 14px; }
+  .ghead .gtitle { font-weight: 600; font-size: 13px; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ghead .ctrls { margin-left: auto; display: flex; gap: 4px; }
+  .gbody { padding: 10px; }
+  .group.collapsed .gbody { display: none; }
+
   /* ---------- form / JSON mode toggle ---------- */
   .modeswitch {
     display: flex; width: max-content; margin: 0 0 16px; border: 1px solid var(--line);
@@ -211,12 +223,9 @@
       <h2>Slides <span class="pill" id="slideCount">0</span></h2>
       <div id="slideList"></div>
       <div class="addrow">
-        <button class="btn" data-add="photo">＋ Photo</button>
-        <button class="btn" data-add="video">＋ Video</button>
-        <button class="btn" data-add="text">＋ Text slide</button>
-        <button class="btn" data-add="quote">＋ Quote</button>
-        <button class="btn" data-add="section">＋ Chapter card</button>
+        <button class="btn" data-add="section">＋ New chapter (group)</button>
       </div>
+      <div class="hint">Slides are organized in groups — a chapter card plus everything after it. Add photos, text, etc. inside a group with its own ＋ buttons. A slide’s ↑ at the top of a group moves it into the previous group.</div>
     </div>
 
     <!-- End screen -->
@@ -323,15 +332,100 @@
     $("#e_subtitle").value = state.end.subtitle || "";
   }
 
-  // ---------- slide list render ----------
+  // ---------- slide list render (grouped by chapter) ----------
+  // A group = a section slide + every non-section slide after it, until the next section.
+  // Slides before the first section form the "Intro" group.
+  function partitionGroups() {
+    const groups = []; let cur = { section: null, members: [] };
+    state.slides.forEach((s, i) => {
+      if (s.type === "section") { groups.push(cur); cur = { section: i, members: [] }; }
+      else cur.members.push(i);
+    });
+    groups.push(cur);
+    // drop empty phantom groups (e.g. before a leading section), but keep one if the show is empty
+    return groups.filter((g, i, all) => g.section !== null || g.members.length || all.length === 1);
+  }
+
+  const collapsedState = new Map();   // keyed by the section slide object ("intro" for the intro group)
+
   function renderSlides() {
     const list = $("#slideList");
     list.innerHTML = "";
     $("#slideCount").textContent = state.slides.length;
-    state.slides.forEach((s, i) => list.appendChild(slideEl(s, i)));
+    partitionGroups().forEach((g, gi) => list.appendChild(groupEl(g, gi)));
   }
 
-  function slideEl(s, i) {
+  function groupEl(g, gi) {
+    const sec = g.section !== null ? state.slides[g.section] : null;
+    const key = sec || "intro";
+    const wrap = document.createElement("div"); wrap.className = "group";
+    // big groups start collapsed so the overview reads like a table of contents
+    const isCollapsed = collapsedState.has(key) ? collapsedState.get(key) : g.members.length > 10;
+    if (isCollapsed) wrap.classList.add("collapsed");
+
+    const head = document.createElement("div"); head.className = "ghead";
+    const caret = document.createElement("span"); caret.className = "caret"; caret.textContent = isCollapsed ? "▸" : "▾";
+    const title = document.createElement("span"); title.className = "gtitle";
+    title.textContent = sec ? ("❖ " + (sec.title || "Untitled chapter")) : "Intro";
+    const count = document.createElement("span"); count.className = "pill";
+    count.textContent = g.members.length + (g.members.length === 1 ? " item" : " items");
+    const gctrls = document.createElement("div"); gctrls.className = "ctrls";
+    gctrls.append(
+      iconBtn("↑", "Move group (and all its slides) up", (e) => { e.stopPropagation(); moveGroup(gi, -1); }),
+      iconBtn("↓", "Move group (and all its slides) down", (e) => { e.stopPropagation(); moveGroup(gi, 1); }),
+      iconBtn("✕", "Delete group and all its slides", (e) => { e.stopPropagation(); deleteGroup(gi); }, "del"),
+    );
+    head.append(caret, title, count, gctrls);
+    head.addEventListener("click", () => {
+      const now = wrap.classList.toggle("collapsed");
+      collapsedState.set(key, now);
+      caret.textContent = now ? "▸" : "▾";
+    });
+
+    const gbody = document.createElement("div"); gbody.className = "gbody";
+    if (sec) gbody.appendChild(slideEl(sec, g.section, true));   // chapter fields; group ctrls handle move/delete
+    g.members.forEach(i => gbody.appendChild(slideEl(state.slides[i], i)));
+    const ar = document.createElement("div"); ar.className = "addrow";
+    [["photo", "＋ Photo"], ["video", "＋ Video"], ["text", "＋ Text"], ["quote", "＋ Quote"]].forEach(([t, label]) => {
+      const b = document.createElement("button"); b.className = "btn"; b.textContent = label;
+      b.addEventListener("click", () => addToGroup(gi, t));
+      ar.appendChild(b);
+    });
+    gbody.appendChild(ar);
+
+    wrap.append(head, gbody);
+    return wrap;
+  }
+
+  // ---------- group operations ----------
+  function groupSlices() {
+    return partitionGroups().map(g =>
+      (g.section !== null ? [state.slides[g.section]] : []).concat(g.members.map(i => state.slides[i])));
+  }
+  function moveGroup(gi, dir) {
+    const arrs = groupSlices();
+    const gj = gi + dir; if (gj < 0 || gj >= arrs.length) return;
+    [arrs[gi], arrs[gj]] = [arrs[gj], arrs[gi]];
+    state.slides = arrs.flat();
+    touch(); renderSlides();
+  }
+  function deleteGroup(gi) {
+    const g = partitionGroups()[gi];
+    const name = g.section !== null ? `“${state.slides[g.section].title || "Untitled chapter"}”` : "the intro";
+    if (!confirm(`Delete ${name} and its ${g.members.length} slide(s)? This can’t be undone.`)) return;
+    const start = g.section !== null ? g.section : g.members[0];
+    state.slides.splice(start, (g.section !== null ? 1 : 0) + g.members.length);
+    touch(); renderSlides();
+  }
+  function addToGroup(gi, type) {
+    const g = partitionGroups()[gi];
+    const last = g.members.length ? g.members[g.members.length - 1] : (g.section !== null ? g.section : -1);
+    state.slides.splice(last + 1, 0, blankSlide(type));
+    collapsedState.set(g.section !== null ? state.slides[g.section] : "intro", false); // reveal what you just added
+    touch(); renderSlides();
+  }
+
+  function slideEl(s, i, noCtrls) {
     const wrap = document.createElement("div");
     wrap.className = "slide " + s.type;
 
@@ -352,15 +446,17 @@
     const top = document.createElement("div");
     top.className = "toprow";
     top.innerHTML = `<span class="type-badge">${s.type}</span><span class="num">#${i + 1}</span>`;
-    const ctrls = document.createElement("div");
-    ctrls.className = "ctrls";
-    ctrls.append(
-      iconBtn("↑", "Move up", () => move(i, -1)),
-      iconBtn("↓", "Move down", () => move(i, 1)),
-      iconBtn("⧉", "Duplicate", () => dup(i)),
-      iconBtn("✕", "Delete", () => del(i), "del"),
-    );
-    top.appendChild(ctrls);
+    if (!noCtrls) {
+      const ctrls = document.createElement("div");
+      ctrls.className = "ctrls";
+      ctrls.append(
+        iconBtn("↑", "Move up (crosses into the previous group at the top)", () => move(i, -1)),
+        iconBtn("↓", "Move down (crosses into the next group at the bottom)", () => move(i, 1)),
+        iconBtn("⧉", "Duplicate", () => dup(i)),
+        iconBtn("✕", "Delete", () => del(i), "del"),
+      );
+      top.appendChild(ctrls);
+    }
     body.appendChild(top);
 
     if (s.type === "section") {
