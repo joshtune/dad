@@ -146,7 +146,8 @@
     },
     {
       "type": "section",
-      "title": "Life Before Church Service"
+      "title": "Life Before Church Service",
+      "music": "I'll Be There.mp3"
     },
     {
       "type": "photo",
@@ -190,7 +191,8 @@
     },
     {
       "type": "section",
-      "title": "Church Service"
+      "title": "Church Service",
+      "music": "Because (feat. Life in 3D) - Easter Music Video.mp3"
     },
     {
       "type": "photo",
@@ -454,7 +456,8 @@
     },
     {
       "type": "section",
-      "title": "Family"
+      "title": "Family",
+      "music": "Folofola Mai a Sisu.mp3"
     },
     {
       "type": "photo",
