@@ -272,7 +272,7 @@
   };
 
   function blankSlide(type) {
-    if (type === "section") return { type: "section", title: "", subtitle: "" };
+    if (type === "section") return { type: "section", title: "", subtitle: "", body: "", music: "" };
     if (type === "text")    return { type: "text", kicker: "", heading: "", body: "" };
     if (type === "quote")   return { type: "quote", quote: "", attribution: "" };
     return { type, url: "", date: "", caption: "" };
@@ -362,6 +362,11 @@
     if (s.type === "section") {
       body.appendChild(field("Chapter title", s.title || "", (v) => { s.title = v; touch(true); }, "input", "The Early Years"));
       body.appendChild(field("Subtitle / era", s.subtitle || "", (v) => { s.subtitle = v; touch(true); }, "input", "1955 – 1975"));
+      const cbStr = Array.isArray(s.body) ? s.body.join("\n") : (s.body || "");
+      const cb = field("Copy (optional — one line per row)", cbStr, (v) => { s.body = v; touch(true); }, "textarea", "A few lines shown under the title");
+      cb.querySelector("textarea").rows = 3;
+      body.appendChild(cb);
+      body.appendChild(field("Music from this chapter on (optional)", s.music || "", (v) => { s.music = v; touch(true); }, "input", "music-2.mp3 — fades from the previous track"));
     } else if (s.type === "text") {
       const r = document.createElement("div"); r.className = "row";
       r.appendChild(field("Kicker (small gold label)", s.kicker || "", (v) => { s.kicker = v; touch(true); }, "input", "To Our Dad"));
@@ -439,7 +444,13 @@
       sectionDuration: Number(state.sectionDuration) || 4.5,
       textDuration: Number(state.textDuration) || 11,
       slides: state.slides.map(s => {
-        if (s.type === "section") return trimObj({ type: "section", title: s.title, subtitle: s.subtitle });
+        if (s.type === "section") {
+          const body = (Array.isArray(s.body) ? s.body : String(s.body || "").split("\n"));
+          while (body.length && body[body.length - 1].trim() === "") body.pop();
+          const o = trimObj({ type: "section", title: s.title, subtitle: s.subtitle, music: s.music });
+          if (body.length) o.body = body;
+          return o;
+        }
         if (s.type === "text") {
           const body = (Array.isArray(s.body) ? s.body : String(s.body || "").split("\n"));
           while (body.length && body[body.length - 1].trim() === "") body.pop(); // drop trailing blanks
@@ -492,7 +503,8 @@
       title: { occasion: m.title?.occasion || "", name: m.title?.name || m.title?.heading || "", subtitle: m.title?.subtitle || "" },
       music: m.music || "", photoDuration: m.photoDuration ?? 7, sectionDuration: m.sectionDuration ?? 4.5, textDuration: m.textDuration ?? 11,
       slides: (m.slides || []).map(s => {
-        if (s.type === "section") return { type: "section", title: s.title || "", subtitle: s.subtitle || "" };
+        if (s.type === "section") return { type: "section", title: s.title || "", subtitle: s.subtitle || "",
+          body: Array.isArray(s.body) ? s.body.join("\n") : (s.body || ""), music: s.music || "" };
         if (s.type === "text") return { type: "text", kicker: s.kicker || "", heading: s.heading || "",
           body: Array.isArray(s.body) ? s.body.join("\n") : (s.body || "") };
         if (s.type === "quote") return { type: "quote", quote: s.quote || "", attribution: s.attribution || "" };

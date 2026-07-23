@@ -244,7 +244,7 @@
     $("#startSubtitle").textContent = t.subtitle || "";
     document.title = t.name || t.heading || "Slideshow";
 
-    if (cfg.music) { music.src = cfg.music; musicEnabled = true; }
+    if (anyMusic()) { musicEnabled = true; }
     else { $("#btnMute").style.display = "none"; }
 
     if (!slides.length) { showMessage("No slides yet", "Add photos or videos to the \"slides\" list in media.json."); return; }
@@ -264,6 +264,7 @@
     o.body = Array.isArray(s.body) ? s.body : (s.body ? String(s.body).split("\n") : []);
     o.quote = s.quote || "";
     o.attribution = s.attribution || "";
+    o.music = s.music || "";           // section slides: track for this chapter onward
     if (s.duration) o.duration = s.duration;
     return o;
   }
@@ -271,9 +272,62 @@
   // seconds a non-media card stays on screen
   function cardSecs(slide) {
     if (slide.duration) return slide.duration;
-    if (slide.type === "section") return cfg.sectionDuration || SECTION_DEFAULT;
+    if (slide.type === "section")
+      // a chapter card with body copy needs reading time
+      return slide.body && slide.body.length ? (cfg.textDuration || TEXT_DEFAULT) : (cfg.sectionDuration || SECTION_DEFAULT);
     if (slide.type === "text" || slide.type === "quote") return cfg.textDuration || TEXT_DEFAULT;
     return cfg.photoDuration || PHOTO_DEFAULT; // photo placeholder
+  }
+
+  // ---------- music engine: per-chapter tracks with crossfades ----------
+  let currentTrack = null, audioCtx = null, audioGain = null, fadeTimer = null, switchSeq = 0;
+
+  // The track in effect at slide i = the last chapter music at or before i (else the global one).
+  function musicFor(i) {
+    let url = cfg.music || "";
+    for (let k = 0; k <= i && k < slides.length; k++)
+      if (slides[k].type === "section" && slides[k].music) url = slides[k].music;
+    return url;
+  }
+  function anyMusic() { return !!(cfg.music || slides.some(s => s.type === "section" && s.music)); }
+
+  // Web Audio gain gives real fades everywhere (incl. iOS, where volume is read-only).
+  function initAudioGraph() {
+    if (audioCtx) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC();
+      const src = audioCtx.createMediaElementSource(music);
+      audioGain = audioCtx.createGain();
+      src.connect(audioGain); audioGain.connect(audioCtx.destination);
+    } catch (e) { audioCtx = null; audioGain = null; }   // fallback: element volume
+  }
+  function getGain() { return audioGain ? audioGain.gain.value : music.volume; }
+  function setGain(v) { if (audioGain) audioGain.gain.value = v; else music.volume = v; }
+  function fadeTo(target, ms) {
+    return new Promise((res) => {
+      if (fadeTimer) clearInterval(fadeTimer);
+      const start = getGain(), t0 = performance.now();
+      fadeTimer = setInterval(() => {
+        const p = Math.min(1, (performance.now() - t0) / ms);
+        setGain(start + (target - start) * p);
+        if (p >= 1) { clearInterval(fadeTimer); fadeTimer = null; res(); }
+      }, 50);
+    });
+  }
+  async function syncMusic(i) {
+    if (!started || !musicEnabled) return;
+    const want = musicFor(i);
+    if (want === currentTrack) return;
+    const seq = ++switchSeq;                       // a newer switch cancels this one
+    if (currentTrack && !music.paused) await fadeTo(0, 1400);
+    if (seq !== switchSeq) return;
+    currentTrack = want;
+    if (!want) { music.pause(); return; }
+    music.src = want;
+    setGain(0);
+    if (!muted && playing) { const p = music.play(); if (p && p.catch) p.catch(() => {}); }
+    await fadeTo(1, 1400);
   }
 
   function render(i) {
@@ -301,6 +355,11 @@
       el.onerror = () => { next.innerHTML = ""; next.appendChild(buildCard("", "Video unavailable", slide.url)); scheduleCard(); };
     } else if (slide.type === "section") {
       el = buildCard("Chapter", slide.title, slide.subtitle);
+      if (slide.body && slide.body.length) {         // optional chapter copy
+        const b = document.createElement("div"); b.className = "body";
+        slide.body.forEach(line => { const p = document.createElement("p"); p.textContent = line || ""; b.appendChild(p); });
+        el.appendChild(b);
+      }
     } else if (slide.type === "text") {
       el = buildText(slide);
     } else if (slide.type === "quote") {
@@ -332,6 +391,7 @@
     } else if (playing) {
       scheduleCard(cardSecs(slide));
     }
+    syncMusic(idx);
     preloadNext();
   }
 
@@ -397,7 +457,7 @@
       const slide = slides[idx];
       if (slide && slide.type === "video" && activeVid) activeVid.play().catch(() => {});
       else if (slide && slide.type !== "end") scheduleCard(cardSecs(slide));
-      if (musicEnabled && !muted && started) music.play().catch(() => {});
+      if (musicEnabled && !muted && started && currentTrack) music.play().catch(() => {});
     } else {
       clearTimer();
       if (activeImg) activeImg.style.animationPlayState = "paused";
@@ -417,9 +477,10 @@
     if (started) return;
     started = true;
     $("#start").classList.add("gone");
-    if (musicEnabled && !muted) music.play().catch(() => {});
+    initAudioGraph();                               // must happen inside the user gesture
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
     setPlaying(true);
-    render(0);
+    render(0);                                      // render → syncMusic starts the first track
   }
 
   function showMessage(h, b) { $("#msgHeading").textContent = h; $("#msgBody").textContent = b || ""; $("#message").classList.add("show"); }
@@ -433,7 +494,7 @@
   $("#btnFull").addEventListener("click", toggleFullscreen);
   $("#btnMute").addEventListener("click", () => {
     muted = !muted; music.muted = muted; $("#btnMute").style.opacity = muted ? .4 : 1;
-    if (!muted && started) music.play().catch(() => {});
+    if (!muted && started && currentTrack) music.play().catch(() => {});
   });
 
   document.addEventListener("keydown", (e) => {
