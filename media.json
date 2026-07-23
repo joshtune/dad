@@ -1,58 +1,717 @@
 {
   "title": {
-    "occasion": "A Tribute to Dad",
-    "name": "John Tune",
-    "subtitle": "A Life in Pictures"
+    "occasion": "Celebrating the Life and Legacy of",
+    "name": "Iotua Bareeta Tune",
+    "subtitle": "38 Years of Dedicated Church Service"
   },
-
   "music": "",
-
   "photoDuration": 7,
   "sectionDuration": 4.5,
-
+  "textDuration": 11,
   "slides": [
-    { "type": "section", "title": "The Early Years", "subtitle": "1955 – 1975" },
-
     {
-      "type": "photo",
-      "url": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=2400",
-      "date": "1962",
-      "caption": "Replace these examples with your own photos."
+      "type": "quote",
+      "quote": "A faithful servant, devoted husband, loving father, and cherished grandfather."
+    },
+    {
+      "type": "text",
+      "kicker": "A Life of Purpose",
+      "body": [
+        "Every great journey begins with a single step.",
+        "",
+        "Born in Kiribati, Iotua dedicated his life to serving God, strengthening families, and blessing countless lives through education, leadership, and discipleship."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "A Devoted Husband",
+      "heading": "Husband",
+      "body": [
+        "For over four decades, you have been your family's anchor.",
+        "",
+        "Thank you for your unwavering love, quiet strength, faithful example, and countless sacrifices.",
+        "",
+        "Your greatest accomplishment has never been your title — it has been the home you built with love."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "To Our Dad",
+      "heading": "Dad",
+      "body": [
+        "You taught us by example.",
+        "",
+        "Integrity matters. Faith comes first. Hard work is honorable. Service is a privilege.",
+        "",
+        "Because of you, we know what it means to love God and love people.",
+        "",
+        "Thank you for always believing in us."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "To Their Grandpa",
+      "heading": "Grandpa",
+      "body": [
+        "Their storyteller. Their teacher. Their hero. Their biggest cheerleader.",
+        "",
+        "Your legacy isn't only found in the lives you've served —",
+        "it's found in the little hands that reach for yours."
+      ]
+    },
+    {
+      "type": "section",
+      "title": "38 Years of Service",
+      "subtitle": "A Lifetime of Leadership"
+    },
+    {
+      "type": "text",
+      "kicker": "A Lifetime of Leadership",
+      "body": [
+        "Teacher · Vice Principal · Principal",
+        "CES Country Director",
+        "Seminary & Institute Coordinator",
+        "Kiribati Service Centre Manager",
+        "MLS Coordinator · Leader Services Manager",
+        "",
+        "Every assignment accepted with humility.",
+        "Every responsibility fulfilled with excellence."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "A Disciple of Jesus Christ",
+      "body": [
+        "Through decades of Church service, he faithfully served as:",
+        "",
+        "Missionary · Bishop · Stake President",
+        "Mission Counselor · Area Seventy",
+        "…and in many other sacred callings.",
+        "",
+        "His influence reached far beyond buildings and meetings — he strengthened generations of Saints throughout Kiribati and the Pacific."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "The Real Legacy",
+      "body": [
+        "Success isn't measured by titles.",
+        "It's measured by lives changed.",
+        "",
+        "Students inspired. Missionaries mentored.",
+        "Families strengthened. Leaders developed.",
+        "Children loved."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "Thank You",
+      "body": [
+        "For every early morning. Every late night.",
+        "Every sacrifice your family shared.",
+        "Every prayer offered. Every life you quietly lifted.",
+        "",
+        "Because of you, the Kingdom is stronger."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "A New Chapter",
+      "body": [
+        "Retirement isn't the end. It's the beginning of a new season.",
+        "",
+        "More time with family. More adventures. More stories.",
+        "More grandchildren. More opportunities to continue blessing lives."
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Thank You",
+      "body": [
+        "Thank you, Dad. Thank you, Grandpa. Thank you, Elder Tune.",
+        "",
+        "Your work has blessed generations.",
+        "Your example will continue to guide us.",
+        "Your legacy will live on through your family, your faith, and the countless lives you've touched."
+      ]
+    },
+    {
+      "type": "quote",
+      "quote": "Well done, thou good and faithful servant.",
+      "attribution": "Matthew 25:21"
+    },
+    {
+      "type": "quote",
+      "quote": "Your greatest achievement is the legacy of faith, love, and service you have given to your family and to the people of Kiribati. We love you, and we are forever grateful."
+    },
+    {
+      "type": "section",
+      "title": "A Life in Pictures",
+      "subtitle": "Memories Through the Years"
     },
     {
       "type": "photo",
-      "url": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=2400",
-      "date": "1968",
-      "caption": "Add a date and a caption to each slide."
-    },
-
-    { "type": "section", "title": "Family & Career", "subtitle": "1985 – 2015" },
-
-    {
-      "type": "video",
-      "url": "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_1080_10s_1MB.mp4",
-      "date": "2003",
-      "caption": "Videos play with the soundtrack continuing over them."
+      "url": "images/photo-001.jpg"
     },
     {
       "type": "photo",
-      "url": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=2400",
-      "date": "2011",
-      "caption": "Each photo gets a slow, subtle Ken Burns motion."
+      "url": "images/photo-002.jpg"
     },
-
-    { "type": "section", "title": "Here's to What's Next", "subtitle": "2025 →" },
-
     {
       "type": "photo",
-      "url": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=2400",
-      "date": "2025",
-      "caption": "Cheers to the next chapter."
+      "url": "images/photo-003.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-004.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-005.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-006.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-007.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-008.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-009.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-010.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-011.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-012.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-013.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-014.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-015.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-016.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-017.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-018.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-019.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-020.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-021.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-022.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-023.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-024.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-025.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-026.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-027.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-028.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-029.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-030.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-031.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-032.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-033.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-034.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-035.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-036.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-037.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-038.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-039.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-040.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-041.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-042.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-043.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-044.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-045.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-046.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-047.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-048.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-049.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-050.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-051.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-052.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-053.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-054.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-055.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-056.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-057.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-058.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-059.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-060.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-061.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-062.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-063.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-064.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-065.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-066.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-067.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-068.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-069.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-070.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-071.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-072.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-073.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-074.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-075.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-076.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-077.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-078.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-079.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-080.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-081.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-082.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-083.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-084.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-085.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-086.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-087.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-088.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-089.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-090.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-091.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-092.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-093.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-094.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-095.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-096.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-097.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-098.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-099.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-100.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-101.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-102.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-103.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-104.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-105.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-106.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-107.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-108.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-109.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-110.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-111.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-112.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-113.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-114.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-115.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-116.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-117.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-118.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-119.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-120.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-121.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-122.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-123.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-124.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-125.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-126.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-127.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-128.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-129.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-130.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-131.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-132.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-133.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-134.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-135.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-136.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-137.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-138.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-139.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/photo-140.jpg"
     }
   ],
-
   "end": {
     "heading": "We Love You, Dad",
-    "subtitle": "With Love, Always"
+    "subtitle": "Forever Grateful"
   }
 }

@@ -2,8 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Slideshow Editor</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0e0f12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dad">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -74,6 +82,8 @@
   .slide.section { border-left: 3px solid var(--accent); }
   .slide.photo   { border-left: 3px solid var(--accent2); }
   .slide.video   { border-left: 3px solid #b98cf0; }
+  .slide.text    { border-left: 3px solid var(--ok); }
+  .slide.quote   { border-left: 3px solid #e0b3d0; }
   .slide .thumb {
     width: 76px; height: 76px; border-radius: 7px; background: #000 center/cover no-repeat;
     flex: 0 0 auto; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center;
@@ -109,6 +119,48 @@
   .keyhint { font-size: 12px; color: var(--dim); }
   .pill { font-size: 11px; padding: 2px 7px; border-radius: 999px; background: rgba(255,255,255,.06); color: var(--dim); }
   code { background: var(--panel2); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+
+  /* ---------- form / JSON mode toggle ---------- */
+  .modeswitch {
+    display: flex; width: max-content; margin: 0 0 16px; border: 1px solid var(--line);
+    border-radius: 9px; overflow: hidden;
+  }
+  .modeswitch button {
+    border: 0; background: transparent; color: var(--dim); padding: 9px 18px;
+    font-size: 13px; font-weight: 600; letter-spacing: .02em;
+  }
+  .modeswitch button.active { background: var(--panel2); color: var(--ink); }
+  #jsonCard { display: none; }
+  body.mode-json .form-only { display: none; }
+  body.mode-json #jsonCard { display: block; }
+  body.mode-json #jsonArea { min-height: 58vh; }
+
+  /* ---------- mobile / touch ---------- */
+  @media (max-width: 640px) {
+    body { font-size: 15px; }
+    /* 16px inputs stop iOS from auto-zooming on focus */
+    input, textarea, select { font-size: 16px; padding: 11px 12px; }
+
+    header { flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
+    header .spacer { display: none; }
+    header .title { flex: 1 1 auto; font-size: 14px; }
+    /* action buttons wrap onto their own line, each roomy enough to tap */
+    header .btn { flex: 1 1 auto; justify-content: center; padding: 10px 12px; }
+
+    .editor { padding: 14px; }
+    .card { padding: 14px; }
+    /* paired fields stack vertically instead of squeezing side by side */
+    .row { flex-direction: column; gap: 0; }
+    .row > * { margin-bottom: 12px; }
+    .row > *:last-child { margin-bottom: 0; }
+
+    /* slide cards: smaller thumb, bigger touch controls */
+    .slide { padding: 12px; gap: 10px; }
+    .slide .thumb { width: 56px; height: 56px; }
+    .slide .ctrls { gap: 6px; }
+    .iconbtn { width: 38px; height: 38px; font-size: 16px; }
+    .addrow .btn { flex: 1 1 40%; justify-content: center; padding: 12px 10px; }
+  }
 </style>
 </head>
 <body>
@@ -119,13 +171,19 @@
   <button class="btn ghost" id="btnImport" title="Reload from media.json">↻ Load current</button>
   <button class="btn ghost" id="btnDownload">⤓ Download JSON</button>
   <button class="btn" id="btnPreview">▷ Preview</button>
+  <button class="btn" id="btnSave" title="Save media.json to this server">💾 Save</button>
   <button class="btn primary" id="btnPublish">⬆ Publish</button>
 </header>
 
 <main>
   <div class="editor">
+    <div class="modeswitch">
+      <button id="modeFormBtn" class="active">✏️ Form</button>
+      <button id="modeJsonBtn">{ } JSON</button>
+    </div>
+
     <!-- Title / branding -->
-    <div class="card">
+    <div class="card form-only">
       <h2>Title screen &amp; branding</h2>
       <div class="field"><label>Occasion (small kicker)</label><input id="t_occasion" placeholder="A Tribute to Dad"></div>
       <div class="field"><label>Name / headline (large)</label><input id="t_name" placeholder="John Tune"></div>
@@ -133,7 +191,7 @@
     </div>
 
     <!-- Soundtrack + timing -->
-    <div class="card">
+    <div class="card form-only">
       <h2>Soundtrack &amp; timing</h2>
       <div class="field">
         <label>Music URL (plays over the whole show, including videos)</label>
@@ -147,53 +205,43 @@
     </div>
 
     <!-- Slides -->
-    <div class="card">
+    <div class="card form-only">
       <h2>Slides <span class="pill" id="slideCount">0</span></h2>
       <div id="slideList"></div>
       <div class="addrow">
         <button class="btn" data-add="photo">＋ Photo</button>
         <button class="btn" data-add="video">＋ Video</button>
+        <button class="btn" data-add="text">＋ Text slide</button>
+        <button class="btn" data-add="quote">＋ Quote</button>
         <button class="btn" data-add="section">＋ Chapter card</button>
       </div>
     </div>
 
     <!-- End screen -->
-    <div class="card">
+    <div class="card form-only">
       <h2>End screen</h2>
       <div class="field"><label>Heading</label><input id="e_heading" placeholder="We Love You, Dad"></div>
       <div class="field"><label>Subtitle</label><input id="e_subtitle" placeholder="With Love, Always"></div>
     </div>
 
-    <!-- Publish settings -->
-    <div class="card">
-      <h2>Publish to GitHub</h2>
-      <div class="row">
-        <div class="field"><label>Owner (username/org)</label><input id="g_owner" placeholder="your-username"></div>
-        <div class="field"><label>Repository</label><input id="g_repo" placeholder="dad"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label>Branch</label><input id="g_branch" placeholder="main" value="main"></div>
-        <div class="field"><label>Path</label><input id="g_path" placeholder="media.json" value="media.json"></div>
-      </div>
+    <!-- Raw JSON -->
+    <div class="card" id="jsonCard">
+      <h2>Raw JSON (media.json)</h2>
       <div class="field">
-        <label>GitHub personal-access token</label>
-        <input id="g_token" type="password" placeholder="github_pat_… (stored only in this browser)">
-        <div class="hint">
-          Create a <b>fine-grained token</b> with <b>Contents: Read &amp; write</b> on this one repo:
-          <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">github.com/settings/personal-access-tokens/new</a>.
-          It’s saved only in your browser’s localStorage and sent directly to GitHub — never to anyone else.
-        </div>
+        <textarea id="jsonArea" rows="14" spellcheck="false"
+          style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.45"></textarea>
+        <div class="hint">The full <code>media.json</code>. Edit it directly, then press <b>Apply to editor</b> —
+        or press <b>Load from editor</b> to regenerate it from the form above. Invalid JSON is rejected with an error, nothing is lost.</div>
       </div>
-      <details class="adv">
-        <summary>Also publish index.html &amp; the player files (first-time setup)</summary>
-        <div class="field" style="margin-top:10px">
-          <label><input type="checkbox" id="g_pushIndex" style="width:auto;display:inline;margin-right:6px">Push <code>index.html</code> too on next publish</label>
-          <div class="hint">Use this the first time so the live player matches this editor. After that, leave it off — publishing only updates <code>media.json</code>.</div>
-        </div>
-      </details>
+      <div class="addrow">
+        <button class="btn" id="btnJsonFrom">↻ Load from editor</button>
+        <button class="btn primary" id="btnJsonApply">✓ Apply to editor</button>
+        <button class="btn" id="btnJsonCopy">⧉ Copy</button>
+      </div>
     </div>
 
-    <p class="keyhint">Everything autosaves to this browser as you type. Use <b>Download JSON</b> for a manual backup, or <b>Publish</b> to push live.</p>
+    <p class="keyhint form-only">Everything autosaves to this browser as you type. <b>💾 Save</b> writes to the home server,
+    <b>⬆ Publish</b> pushes the public site live. You’ll be asked for a GitHub token the first time you publish.</p>
   </div>
 
   <div class="preview-pane">
@@ -218,13 +266,15 @@
   // ---------- state ----------
   let state = {
     title: { occasion: "", name: "", subtitle: "" },
-    music: "", photoDuration: 7, sectionDuration: 4.5,
+    music: "", photoDuration: 7, sectionDuration: 4.5, textDuration: 11,
     slides: [],
     end: { heading: "", subtitle: "" }
   };
 
   function blankSlide(type) {
     if (type === "section") return { type: "section", title: "", subtitle: "" };
+    if (type === "text")    return { type: "text", kicker: "", heading: "", body: "" };
+    if (type === "quote")   return { type: "quote", quote: "", attribution: "" };
     return { type, url: "", date: "", caption: "" };
   }
 
@@ -232,10 +282,10 @@
   function init() {
     const saved = localStorage.getItem(LS);
     if (saved) { try { state = Object.assign(state, JSON.parse(saved)); } catch (e) {} }
-    loadGh();
     bindHeaderFields();
     renderAll();
     refreshPreview();
+    syncJsonArea();
     // If nothing saved yet, try pulling the live media.json as a starting point.
     if (!saved) importCurrent(true);
   }
@@ -287,6 +337,8 @@
     if (s.type === "photo" && s.url) { thumb.style.backgroundImage = `url("${s.url.replace(/"/g, '%22')}")`; }
     else if (s.type === "video") thumb.textContent = "▶ video";
     else if (s.type === "section") thumb.textContent = "❖ chapter";
+    else if (s.type === "text") thumb.textContent = "¶ text";
+    else if (s.type === "quote") thumb.textContent = "❝ quote";
     else thumb.textContent = "photo";
     wrap.appendChild(thumb);
 
@@ -310,6 +362,21 @@
     if (s.type === "section") {
       body.appendChild(field("Chapter title", s.title || "", (v) => { s.title = v; touch(true); }, "input", "The Early Years"));
       body.appendChild(field("Subtitle / era", s.subtitle || "", (v) => { s.subtitle = v; touch(true); }, "input", "1955 – 1975"));
+    } else if (s.type === "text") {
+      const r = document.createElement("div"); r.className = "row";
+      r.appendChild(field("Kicker (small gold label)", s.kicker || "", (v) => { s.kicker = v; touch(true); }, "input", "To Our Dad"));
+      r.appendChild(field("Headline (big, 1–2 words)", s.heading || "", (v) => { s.heading = v; touch(true); }, "input", "Dad"));
+      body.appendChild(r);
+      const bodyStr = Array.isArray(s.body) ? s.body.join("\n") : (s.body || "");
+      const bf = field("Body — one line per row, blank line = space", bodyStr,
+        (v) => { s.body = v; touch(true); }, "textarea", "You taught us by example.\n\nFaith comes first.");
+      bf.querySelector("textarea").rows = 5;
+      body.appendChild(bf);
+    } else if (s.type === "quote") {
+      const qf = field("Quote", s.quote || "", (v) => { s.quote = v; touch(true); }, "textarea", "Well done, thou good and faithful servant.");
+      qf.querySelector("textarea").rows = 3;
+      body.appendChild(qf);
+      body.appendChild(field("Attribution (optional)", s.attribution || "", (v) => { s.attribution = v; touch(true); }, "input", "Matthew 25:21"));
     } else {
       body.appendChild(field(s.type === "video" ? "Video URL" : "Photo URL", s.url || "",
         (v) => { s.url = v; if (s.type === "photo") thumb.style.backgroundImage = `url("${v.replace(/"/g,'%22')}")`; touch(true); },
@@ -370,8 +437,17 @@
       music: state.music || "",
       photoDuration: Number(state.photoDuration) || 7,
       sectionDuration: Number(state.sectionDuration) || 4.5,
+      textDuration: Number(state.textDuration) || 11,
       slides: state.slides.map(s => {
         if (s.type === "section") return trimObj({ type: "section", title: s.title, subtitle: s.subtitle });
+        if (s.type === "text") {
+          const body = (Array.isArray(s.body) ? s.body : String(s.body || "").split("\n"));
+          while (body.length && body[body.length - 1].trim() === "") body.pop(); // drop trailing blanks
+          const o = trimObj({ type: "text", kicker: s.kicker, heading: s.heading });
+          if (body.length) o.body = body;
+          return o;
+        }
+        if (s.type === "quote") return trimObj({ type: "quote", quote: s.quote, attribution: s.attribution });
         return trimObj({ type: s.type, url: s.url, date: s.date, caption: s.caption });
       }),
       end: trimObj({ heading: state.end.heading, subtitle: state.end.subtitle })
@@ -386,15 +462,23 @@
     const f = $("#pvFrame");
     f.src = "index.html?preview=1&t=" + (f.dataset.n = (+(f.dataset.n || 0) + 1));
   }
-  $("#btnPvRefresh").addEventListener("click", refreshPreview);
-  $("#btnPreview").addEventListener("click", refreshPreview);
-  $("#btnPvTab").addEventListener("click", () => {
+  function openFullPreview() {
     localStorage.setItem("slideshow_preview", JSON.stringify(buildMedia()));
     window.open("index.html?preview=1&t=" + Date.now(), "_blank");
+  }
+  $("#btnPvRefresh").addEventListener("click", () => { if (ensureApplied()) refreshPreview(); });
+  // On mobile the inline preview pane is hidden (offsetParent === null),
+  // so open the full-screen preview in a new tab instead of reloading a hidden iframe.
+  $("#btnPreview").addEventListener("click", () => {
+    if (!ensureApplied()) return;
+    if ($(".preview-pane").offsetParent === null) openFullPreview();
+    else refreshPreview();
   });
+  $("#btnPvTab").addEventListener("click", () => { if (ensureApplied()) openFullPreview(); });
 
   // ---------- download ----------
   $("#btnDownload").addEventListener("click", () => {
+    if (!ensureApplied()) return;
     const blob = new Blob([JSON.stringify(buildMedia(), null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob); a.download = "media.json"; a.click();
@@ -402,37 +486,124 @@
   });
 
   // ---------- import existing media.json ----------
+  // Map a media.json object into editor state (shared by import + raw-JSON apply).
+  function applyMedia(m) {
+    state = {
+      title: { occasion: m.title?.occasion || "", name: m.title?.name || m.title?.heading || "", subtitle: m.title?.subtitle || "" },
+      music: m.music || "", photoDuration: m.photoDuration ?? 7, sectionDuration: m.sectionDuration ?? 4.5, textDuration: m.textDuration ?? 11,
+      slides: (m.slides || []).map(s => {
+        if (s.type === "section") return { type: "section", title: s.title || "", subtitle: s.subtitle || "" };
+        if (s.type === "text") return { type: "text", kicker: s.kicker || "", heading: s.heading || "",
+          body: Array.isArray(s.body) ? s.body.join("\n") : (s.body || "") };
+        if (s.type === "quote") return { type: "quote", quote: s.quote || "", attribution: s.attribution || "" };
+        return { type: s.type || "photo", url: s.url || "", date: s.date || s.year || "", caption: s.caption || "" };
+      }),
+      end: { heading: m.end?.heading || "", subtitle: m.end?.subtitle || "" }
+    };
+    localStorage.setItem(LS, JSON.stringify(state));
+    renderAll(); refreshPreview(); syncJsonArea();
+  }
+
   $("#btnImport").addEventListener("click", () => importCurrent(false));
   async function importCurrent(silent) {
     try {
       const res = await fetch("media.json?t=" + Date.now(), { cache: "no-store" });
       if (!res.ok) throw new Error("HTTP " + res.status);
-      const m = await res.json();
-      state = {
-        title: { occasion: m.title?.occasion || "", name: m.title?.name || m.title?.heading || "", subtitle: m.title?.subtitle || "" },
-        music: m.music || "", photoDuration: m.photoDuration ?? 7, sectionDuration: m.sectionDuration ?? 4.5,
-        slides: (m.slides || []).map(s => s.type === "section"
-          ? { type: "section", title: s.title || "", subtitle: s.subtitle || "" }
-          : { type: s.type || "photo", url: s.url || "", date: s.date || s.year || "", caption: s.caption || "" }),
-        end: { heading: m.end?.heading || "", subtitle: m.end?.subtitle || "" }
-      };
-      localStorage.setItem(LS, JSON.stringify(state));
-      renderAll(); refreshPreview();
+      applyMedia(await res.json());
       if (!silent) toast("Loaded current media.json", "ok");
     } catch (e) {
       if (!silent) toast("Couldn’t load media.json — " + e.message, "err");
     }
   }
 
-  // ---------- GitHub publish ----------
-  const ghFields = ["g_owner", "g_repo", "g_branch", "g_path", "g_token"];
-  function loadGh() {
-    let g = {}; try { g = JSON.parse(localStorage.getItem(LS_GH) || "{}"); } catch (e) {}
-    ghFields.forEach(id => { if (g[id] != null) $("#" + id).value = g[id]; });
-    ghFields.forEach(id => $("#" + id).addEventListener("input", saveGh));
+  // ---------- raw JSON panel ----------
+  let jsonDirty = false;
+  function syncJsonArea() {
+    $("#jsonArea").value = JSON.stringify(buildMedia(), null, 2);
+    jsonDirty = false;
   }
-  function saveGh() {
-    const g = {}; ghFields.forEach(id => g[id] = $("#" + id).value); localStorage.setItem(LS_GH, JSON.stringify(g));
+  $("#jsonArea").addEventListener("input", () => { jsonDirty = true; });
+
+  // If the JSON textarea has unapplied edits, validate + apply them before any
+  // action (save/preview/publish/download/mode-switch). Returns false on bad JSON.
+  function ensureApplied() {
+    if (!jsonDirty) return true;
+    try {
+      applyMedia(JSON.parse($("#jsonArea").value));
+      return true;
+    } catch (e) {
+      toast("Fix the JSON first — " + e.message, "err", 7000);
+      return false;
+    }
+  }
+
+  $("#btnJsonFrom").addEventListener("click", () => { syncJsonArea(); toast("JSON regenerated from editor (edits discarded)", "ok"); });
+  $("#btnJsonApply").addEventListener("click", () => {
+    try {
+      applyMedia(JSON.parse($("#jsonArea").value));
+      toast("JSON applied to editor", "ok");
+    } catch (e) {
+      toast("Invalid JSON — " + e.message, "err", 7000);
+    }
+  });
+
+  // ---------- form / JSON mode toggle ----------
+  const LS_MODE = "slideshow_editor_mode";
+  function setMode(mode) {
+    if (mode === "json") {
+      syncJsonArea();                               // always start from current state
+      document.body.classList.add("mode-json");
+    } else {
+      if (!ensureApplied()) return;                 // don't lose edits behind a hidden pane
+      document.body.classList.remove("mode-json");
+    }
+    $("#modeFormBtn").classList.toggle("active", mode !== "json");
+    $("#modeJsonBtn").classList.toggle("active", mode === "json");
+    localStorage.setItem(LS_MODE, mode);
+  }
+  $("#modeFormBtn").addEventListener("click", () => setMode("form"));
+  $("#modeJsonBtn").addEventListener("click", () => setMode("json"));
+  if (localStorage.getItem(LS_MODE) === "json") setMode("json");
+  $("#btnJsonCopy").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText($("#jsonArea").value);
+      toast("Copied to clipboard", "ok");
+    } catch (e) { toast("Copy failed — select the text and copy manually", "err"); }
+  });
+
+  // ---------- save to server ----------
+  $("#btnSave").addEventListener("click", async () => {
+    if (!ensureApplied()) return;
+    const btn = $("#btnSave"); btn.disabled = true; const orig = btn.textContent; btn.textContent = "Saving…";
+    try {
+      const res = await fetch("media.json", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildMedia(), null, 2)
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      toast("Saved — the player now shows this version.", "ok");
+    } catch (e) {
+      toast("Save failed (" + e.message + "). This server may be read-only — use ⤓ Download or ⬆ Publish instead.", "err", 8000);
+    } finally { btn.disabled = false; btn.textContent = orig; }
+  });
+
+  // ---------- GitHub publish (fixed target) ----------
+  const GH = { owner: "joshtune", repo: "dad", branch: "main", path: "media.json" };
+
+  // Token lives only in this browser's localStorage; prompted for on first publish.
+  function ghToken(forceAsk) {
+    let g = {}; try { g = JSON.parse(localStorage.getItem(LS_GH) || "{}"); } catch (e) {}
+    let t = g.token || g.g_token || "";   // g_token: migrate from the old settings shape
+    if (!t || forceAsk) {
+      t = (window.prompt(
+        "Paste a GitHub personal-access token to publish.\n\n" +
+        "Create a fine-grained token with Contents: Read & write on " + GH.owner + "/" + GH.repo + " at\n" +
+        "github.com/settings/personal-access-tokens/new\n\n" +
+        "It is stored only in this browser and sent only to GitHub.") || "").trim();
+      if (t) localStorage.setItem(LS_GH, JSON.stringify({ token: t }));
+    }
+    return t;
   }
 
   function b64(str) { return btoa(unescape(encodeURIComponent(str))); }
@@ -453,26 +624,20 @@
   async function safeMsg(res) { try { return (await res.json()).message || res.statusText; } catch (e) { return res.statusText; } }
 
   $("#btnPublish").addEventListener("click", async () => {
-    const owner = $("#g_owner").value.trim(), repo = $("#g_repo").value.trim();
-    const branch = ($("#g_branch").value.trim() || "main"), path = ($("#g_path").value.trim() || "media.json");
-    const token = $("#g_token").value.trim();
-    if (!owner || !repo || !token) { toast("Fill in owner, repository, and token first.", "err"); return; }
+    if (!ensureApplied()) return;
     if (!state.slides.length) { toast("Add at least one slide before publishing.", "err"); return; }
+    const token = ghToken();
+    if (!token) { toast("Publishing needs a GitHub token.", "err"); return; }
 
     const btn = $("#btnPublish"); btn.disabled = true; const orig = btn.textContent; btn.textContent = "Publishing…";
     try {
       const json = JSON.stringify(buildMedia(), null, 2);
-      await ghPut(path, json, token, owner, repo, branch, "Update slideshow via editor");
-
-      if ($("#g_pushIndex").checked) {
-        const idxRes = await fetch("index.html?t=" + Date.now(), { cache: "no-store" });
-        if (idxRes.ok) {
-          await ghPut("index.html", await idxRes.text(), token, owner, repo, branch, "Publish slideshow player");
-        }
-      }
-      const url = `https://${owner}.github.io/${repo}/`;
+      await ghPut(GH.path, json, token, GH.owner, GH.repo, GH.branch, "Update slideshow via editor");
+      const url = `https://${GH.owner}.github.io/${GH.repo}/`;
       toast(`Published! Live in ~1 min at <a href="${url}" target="_blank">${url}</a>`, "ok", 9000);
     } catch (e) {
+      // A rejected token gets cleared so the next click re-prompts.
+      if (/\b(401|403)\b/.test(e.message)) localStorage.removeItem(LS_GH);
       toast("Publish failed: " + e.message, "err", 8000);
       console.error(e);
     } finally { btn.disabled = false; btn.textContent = orig; }
@@ -490,6 +655,12 @@
 
   init();
 })();
+</script>
+<script>
+  /* PWA: register the service worker for offline + installability (needs HTTPS or localhost). */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
 </script>
 </body>
 </html>

@@ -8,7 +8,21 @@ Pages. Edit one file (`media.json`) to control what plays.
 - **`admin.html`** — visual editor: add photos/videos/captions/music, preview live, and publish.
 - **`index.html`** — the slideshow player. You rarely need to touch this.
 - **`media.json`** — your list of photos/videos, captions, title/end screens, and music.
+- **`manifest.json`**, **`sw.js`**, **`icon-*.png` / `apple-touch-icon.png` / `favicon-32.png`** —
+  the PWA bits (see below). Commit them, but you never edit them by hand.
 - **`README.md`** — this file.
+
+## Install it on your phone (PWA)
+
+The site is a Progressive Web App, so you can add it to your home screen and it opens
+full-screen like a real app (and the player works offline once cached). The **editor** is
+the installed app; "Play slideshow" is available as a long-press shortcut on the icon.
+
+- **iPhone (Safari):** open the editor → Share → **Add to Home Screen**.
+- **Android (Chrome):** open the editor → menu **⋮** → **Install app** / **Add to Home screen**.
+
+Install and offline need a **secure origin** — use the live `https://…github.io/…` site (or an
+HTTPS tunnel). Plain `http://<ip>` won't register the service worker.
 
 ## Easiest workflow: the editor (`admin.html`)
 

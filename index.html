@@ -4,6 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Slideshow</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0e0f12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dad">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600&display=swap" rel="stylesheet">
@@ -79,6 +87,29 @@
     font-weight: 300; font-size: clamp(15px, 2.4vw, 30px); margin-top: 1em; opacity: .8;
     letter-spacing: .15em; text-transform: uppercase;
   }
+  /* rich multi-line body for text slides */
+  .card .body {
+    margin: 1.3em auto 0; max-width: 24em; font-weight: 300;
+    font-size: clamp(16px, 2.1vw, 25px); line-height: 1.5; letter-spacing: .01em; opacity: .92;
+  }
+  .card .body p { margin: .6em 0; }
+  .card .body p:empty { margin: 0; height: .7em; }   /* blank line = spacer */
+  /* quote slides */
+  .card.quote .q {
+    font-weight: 200; font-style: italic; font-size: clamp(22px, 3.8vw, 50px);
+    line-height: 1.32; letter-spacing: .01em; max-width: 20em; margin: 0 auto;
+  }
+  .card.quote .attr {
+    margin-top: 1.2em; font-weight: 300; letter-spacing: .28em; text-transform: uppercase;
+    font-size: clamp(12px, 1.6vw, 18px); color: var(--accent);
+  }
+  /* placeholder shown for a photo slide with no URL yet */
+  .ph {
+    text-align: center; color: var(--accent); border: 1px dashed rgba(217,201,163,.45);
+    border-radius: 10px; padding: 7vmin 6vmin; max-width: 80%;
+    font-weight: 300; letter-spacing: .08em; line-height: 1.4;
+  }
+  .ph .ic { display: block; font-size: clamp(30px, 6vw, 60px); opacity: .7; margin-bottom: .35em; }
   /* fade-up entrance for card text */
   .card > * { animation: rise 1400ms cubic-bezier(.2,.7,.2,1) both; }
   .card > *:nth-child(2) { animation-delay: 180ms; }
@@ -185,7 +216,7 @@
   let cfg = null, slides = [], idx = 0, activeLayer = 0;
   let playing = true, timer = null, started = false;
   let musicEnabled = false, muted = false;
-  const PHOTO_DEFAULT = 7, SECTION_DEFAULT = 4.5;
+  const PHOTO_DEFAULT = 7, SECTION_DEFAULT = 4.5, TEXT_DEFAULT = 10;
   const PREVIEW = new URLSearchParams(location.search).get("preview") === "1";
 
   async function load() {
@@ -227,8 +258,22 @@
     else o.type = /\.(mp4|webm|mov|m4v|ogg)(\?|$)/i.test(s.url || "") ? "video" : "photo";
     o.url = s.url || "";
     o.title = s.title || ""; o.subtitle = s.subtitle || "";
+    // text / quote slides
+    o.kicker = s.kicker || "";
+    o.heading = s.heading || "";
+    o.body = Array.isArray(s.body) ? s.body : (s.body ? String(s.body).split("\n") : []);
+    o.quote = s.quote || "";
+    o.attribution = s.attribution || "";
     if (s.duration) o.duration = s.duration;
     return o;
+  }
+
+  // seconds a non-media card stays on screen
+  function cardSecs(slide) {
+    if (slide.duration) return slide.duration;
+    if (slide.type === "section") return cfg.sectionDuration || SECTION_DEFAULT;
+    if (slide.type === "text" || slide.type === "quote") return cfg.textDuration || TEXT_DEFAULT;
+    return cfg.photoDuration || PHOTO_DEFAULT; // photo placeholder
   }
 
   function render(i) {
@@ -239,7 +284,9 @@
     next.innerHTML = "";
 
     let el = null;
-    if (slide.type === "photo") {
+    if (slide.type === "photo" && !slide.url) {
+      el = buildPlaceholder(slide.caption);       // no URL yet → friendly placeholder card
+    } else if (slide.type === "photo") {
       el = document.createElement("img");
       el.src = slide.url; el.alt = slide.caption || "";
       const dur = (slide.duration || cfg.photoDuration || PHOTO_DEFAULT);
@@ -254,6 +301,10 @@
       el.onerror = () => { next.innerHTML = ""; next.appendChild(buildCard("", "Video unavailable", slide.url)); scheduleCard(); };
     } else if (slide.type === "section") {
       el = buildCard("Chapter", slide.title, slide.subtitle);
+    } else if (slide.type === "text") {
+      el = buildText(slide);
+    } else if (slide.type === "quote") {
+      el = buildQuote(slide);
     } else { // end
       el = buildCard("", slide.heading, slide.caption);
     }
@@ -263,8 +314,8 @@
     layers[activeLayer].classList.remove("active");
     activeLayer = 1 - activeLayer;
 
-    // caption / date — only for actual media
-    if ((slide.type === "photo" || slide.type === "video") && (slide.caption || slide.date)) {
+    // caption / date — only for actual media (not empty-URL placeholders)
+    if (((slide.type === "photo" && slide.url) || slide.type === "video") && (slide.caption || slide.date)) {
       metaDate.textContent = slide.date || "";
       metaCap.textContent = slide.caption || "";
       metaDate.style.display = slide.date ? "" : "none";
@@ -279,7 +330,7 @@
     } else if (slide.type === "end") {
       setPlaying(false);
     } else if (playing) {
-      scheduleCard(slide.type === "section" ? (cfg.sectionDuration || SECTION_DEFAULT) : slide.duration);
+      scheduleCard(cardSecs(slide));
     }
     preloadNext();
   }
@@ -297,6 +348,33 @@
     if (kicker) { const k = document.createElement("div"); k.className = "kicker"; k.textContent = kicker; d.appendChild(k); }
     const h = document.createElement("h1"); h.textContent = heading || ""; d.appendChild(h);
     if (sub) { const p = document.createElement("div"); p.className = "sub"; p.textContent = sub; d.appendChild(p); }
+    return d;
+  }
+
+  function buildText(slide) {
+    const d = document.createElement("div"); d.className = "card";
+    if (slide.kicker) { const k = document.createElement("div"); k.className = "kicker"; k.textContent = slide.kicker; d.appendChild(k); }
+    if (slide.heading) { const h = document.createElement("h1"); h.textContent = slide.heading; d.appendChild(h); }
+    if (slide.body && slide.body.length) {
+      const b = document.createElement("div"); b.className = "body";
+      slide.body.forEach(line => { const p = document.createElement("p"); p.textContent = line || ""; b.appendChild(p); });
+      d.appendChild(b);
+    }
+    return d;
+  }
+
+  function buildQuote(slide) {
+    const d = document.createElement("div"); d.className = "card quote";
+    const q = document.createElement("div"); q.className = "q";
+    q.textContent = "“" + (slide.quote || slide.heading || "") + "”"; d.appendChild(q);
+    if (slide.attribution) { const a = document.createElement("div"); a.className = "attr"; a.textContent = slide.attribution; d.appendChild(a); }
+    return d;
+  }
+
+  function buildPlaceholder(caption) {
+    const d = document.createElement("div"); d.className = "ph";
+    const ic = document.createElement("span"); ic.className = "ic"; ic.textContent = "🖼"; d.appendChild(ic);
+    const t = document.createElement("div"); t.textContent = caption || "Add a photo here"; d.appendChild(t);
     return d;
   }
 
@@ -318,7 +396,7 @@
       if (activeImg) activeImg.style.animationPlayState = "running";
       const slide = slides[idx];
       if (slide && slide.type === "video" && activeVid) activeVid.play().catch(() => {});
-      else if (slide && slide.type !== "end") scheduleCard(slide.type === "section" ? (cfg.sectionDuration || SECTION_DEFAULT) : slide.duration);
+      else if (slide && slide.type !== "end") scheduleCard(cardSecs(slide));
       if (musicEnabled && !muted && started) music.play().catch(() => {});
     } else {
       clearTimer();
@@ -381,6 +459,12 @@
 
   load();
 })();
+</script>
+<script>
+  /* PWA: register the service worker for offline + installability (needs HTTPS or localhost). */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
 </script>
 </body>
 </html>
