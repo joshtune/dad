@@ -17,137 +17,19 @@
       "type": "text",
       "kicker": "A Life of Purpose",
       "body": [
-        "Every great journey begins with a single step.",
+        "From the islands of Kiribati to generations of Saints across the Pacific — a life given to God.",
         "",
         "Born in Kiribati, Iotua dedicated his life to serving God, strengthening families, and blessing countless lives through education, leadership, and discipleship."
       ]
     },
     {
-      "type": "text",
-      "kicker": "A Devoted Husband",
-      "heading": "Husband",
-      "body": [
-        "For over four decades, you have been your family's anchor.",
-        "",
-        "Thank you for your unwavering love, quiet strength, faithful example, and countless sacrifices.",
-        "",
-        "Your greatest accomplishment has never been your title — it has been the home you built with love."
-      ]
-    },
-    {
-      "type": "text",
-      "kicker": "To Our Dad",
-      "heading": "Dad",
-      "body": [
-        "You taught us by example.",
-        "",
-        "Integrity matters. Faith comes first. Hard work is honorable. Service is a privilege.",
-        "",
-        "Because of you, we know what it means to love God and love people.",
-        "",
-        "Thank you for always believing in us."
-      ]
-    },
-    {
-      "type": "text",
-      "kicker": "To Their Grandpa",
-      "heading": "Grandpa",
-      "body": [
-        "Their storyteller. Their teacher. Their hero. Their biggest cheerleader.",
-        "",
-        "Your legacy isn't only found in the lives you've served —",
-        "it's found in the little hands that reach for yours."
-      ]
-    },
-    {
-      "type": "section",
-      "title": "38 Years of Service",
-      "subtitle": "A Lifetime of Leadership"
-    },
-    {
-      "type": "text",
-      "kicker": "A Lifetime of Leadership",
-      "body": [
-        "Teacher · Vice Principal · Principal",
-        "CES Country Director",
-        "Seminary & Institute Coordinator",
-        "Kiribati Service Centre Manager",
-        "MLS Coordinator · Leader Services Manager",
-        "",
-        "Every assignment accepted with humility.",
-        "Every responsibility fulfilled with excellence."
-      ]
-    },
-    {
-      "type": "text",
-      "kicker": "A Disciple of Jesus Christ",
-      "body": [
-        "Through decades of Church service, he faithfully served as:",
-        "",
-        "Missionary · Bishop · Stake President",
-        "Mission Counselor · Area Seventy",
-        "…and in many other sacred callings.",
-        "",
-        "His influence reached far beyond buildings and meetings — he strengthened generations of Saints throughout Kiribati and the Pacific."
-      ]
-    },
-    {
-      "type": "text",
-      "kicker": "The Real Legacy",
-      "body": [
-        "Success isn't measured by titles.",
-        "It's measured by lives changed.",
-        "",
-        "Students inspired. Missionaries mentored.",
-        "Families strengthened. Leaders developed.",
-        "Children loved."
-      ]
-    },
-    {
-      "type": "text",
-      "kicker": "Thank You",
-      "body": [
-        "For every early morning. Every late night.",
-        "Every sacrifice your family shared.",
-        "Every prayer offered. Every life you quietly lifted.",
-        "",
-        "Because of you, the Kingdom is stronger."
-      ]
-    },
-    {
-      "type": "text",
-      "kicker": "A New Chapter",
-      "body": [
-        "Retirement isn't the end. It's the beginning of a new season.",
-        "",
-        "More time with family. More adventures. More stories.",
-        "More grandchildren. More opportunities to continue blessing lives."
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "Thank You",
-      "body": [
-        "Thank you, Dad. Thank you, Grandpa. Thank you, Elder Tune.",
-        "",
-        "Your work has blessed generations.",
-        "Your example will continue to guide us.",
-        "Your legacy will live on through your family, your faith, and the countless lives you've touched."
-      ]
-    },
-    {
-      "type": "quote",
-      "quote": "Well done, thou good and faithful servant.",
-      "attribution": "Matthew 25:21"
-    },
-    {
-      "type": "quote",
-      "quote": "Your greatest achievement is the legacy of faith, love, and service you have given to your family and to the people of Kiribati. We love you, and we are forever grateful."
-    },
-    {
       "type": "section",
       "title": "Life Before Church Service",
-      "music": "I'll Be There.mp3"
+      "music": "I'll Be There.mp3",
+      "subtitle": "The Early Years",
+      "body": [
+        "Where it all began — school days, young dreams, and the foundations of a life of service."
+      ]
     },
     {
       "type": "photo",
@@ -191,8 +73,44 @@
     },
     {
       "type": "section",
+      "title": "38 Years of Service",
+      "subtitle": "A Lifetime of Leadership"
+    },
+    {
+      "type": "text",
+      "kicker": "Every Role, A Calling",
+      "body": [
+        "Teacher · Vice Principal · Principal",
+        "CES Country Director",
+        "Seminary & Institute Coordinator",
+        "Kiribati Service Centre Manager",
+        "MLS Coordinator · Leader Services Manager",
+        "",
+        "Every assignment accepted with humility.",
+        "Every responsibility fulfilled with excellence."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "A Disciple of Jesus Christ",
+      "body": [
+        "Through decades of Church service, he faithfully served as:",
+        "",
+        "Missionary · Bishop · Stake President",
+        "Mission Counselor · Area Seventy",
+        "…and in many other sacred callings.",
+        "",
+        "His influence reached far beyond buildings and meetings — he strengthened generations of Saints throughout Kiribati and the Pacific."
+      ]
+    },
+    {
+      "type": "section",
       "title": "Church Service",
-      "music": "Because (feat. Life in 3D) - Easter Music Video.mp3"
+      "music": "Because (feat. Life in 3D) - Easter Music Video.mp3",
+      "subtitle": "38 Years Among the Saints",
+      "body": [
+        "Classrooms, chapels, and islands — a ministry that reached across the Pacific."
+      ]
     },
     {
       "type": "photo",
@@ -457,7 +375,48 @@
     {
       "type": "section",
       "title": "Family",
-      "music": "Folofola Mai a Sisu.mp3"
+      "music": "Folofola Mai a Sisu.mp3",
+      "subtitle": "His Greatest Calling",
+      "body": [
+        "The home he built with love — and the legacy that lives on in it."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "Her Eternal Companion",
+      "heading": "Husband",
+      "body": [
+        "For over four decades, you have been your family's anchor.",
+        "",
+        "Thank you for your unwavering love, quiet strength, faithful example, and countless sacrifices.",
+        "",
+        "Your greatest accomplishment has never been your title — it has been the home you built with love."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "From Your Children",
+      "heading": "Dad",
+      "body": [
+        "You taught us by example.",
+        "",
+        "Integrity matters. Faith comes first. Hard work is honorable. Service is a privilege.",
+        "",
+        "Because of you, we know what it means to love God and love people.",
+        "",
+        "Thank you for always believing in us."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "From Your Grandchildren",
+      "heading": "Grandpa",
+      "body": [
+        "Our storyteller. Our teacher. Our hero. Our biggest cheerleader.",
+        "",
+        "Your legacy isn't only found in the lives you've served —",
+        "it's found in the little hands that reach for yours."
+      ]
     },
     {
       "type": "photo",
@@ -830,10 +789,64 @@
     {
       "type": "photo",
       "url": "images/family-093.jpg"
+    },
+    {
+      "type": "text",
+      "kicker": "The Real Legacy",
+      "body": [
+        "Success isn't measured by titles.",
+        "It's measured by lives changed.",
+        "",
+        "Students inspired. Missionaries mentored.",
+        "Families strengthened. Leaders developed.",
+        "Children loved."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "For Every Sacrifice",
+      "body": [
+        "For every early morning. Every late night.",
+        "Every sacrifice your family shared.",
+        "Every prayer offered. Every life you quietly lifted.",
+        "",
+        "Because of you, the Kingdom is stronger."
+      ]
+    },
+    {
+      "type": "text",
+      "kicker": "A New Chapter",
+      "body": [
+        "Retirement isn't the end. It's the beginning of a new season.",
+        "",
+        "More time with family. More adventures. More stories.",
+        "More grandchildren. More opportunities to continue blessing lives."
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Thank You",
+      "body": [
+        "Thank you, Dad. Thank you, Grandpa. Thank you, Elder Tune.",
+        "",
+        "Your work has blessed generations.",
+        "Your example will continue to guide us.",
+        "Your legacy will live on through your family, your faith, and the countless lives you've touched."
+      ]
+    },
+    {
+      "type": "quote",
+      "quote": "Well done, thou good and faithful servant.",
+      "attribution": "Matthew 25:21"
+    },
+    {
+      "type": "quote",
+      "quote": "Your greatest achievement is the legacy of faith, love, and service you have given to your family and to the people of Kiribati. We love you, and we are forever grateful.",
+      "attribution": "Your Family"
     }
   ],
   "end": {
     "heading": "We Love You, Dad",
-    "subtitle": "Forever Grateful"
+    "subtitle": "Ko rabwa · Forever Grateful"
   }
 }
