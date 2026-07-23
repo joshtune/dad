@@ -460,7 +460,12 @@
     body.appendChild(top);
 
     if (s.type === "section") {
-      body.appendChild(field("Chapter title", s.title || "", (v) => { s.title = v; touch(true); }, "input", "The Early Years"));
+      body.appendChild(field("Chapter title", s.title || "", (v) => {
+        s.title = v; touch(true);
+        // keep the group header in sync while typing
+        const g = wrap.closest(".group");
+        if (g) g.querySelector(".gtitle").textContent = "❖ " + (v || "Untitled chapter");
+      }, "input", "The Early Years"));
       body.appendChild(field("Subtitle / era", s.subtitle || "", (v) => { s.subtitle = v; touch(true); }, "input", "1955 – 1975"));
       const cbStr = Array.isArray(s.body) ? s.body.join("\n") : (s.body || "");
       const cb = field("Copy (optional — one line per row)", cbStr, (v) => { s.body = v; touch(true); }, "textarea", "A few lines shown under the title");
