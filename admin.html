@@ -438,6 +438,10 @@
     else if (s.type === "text") thumb.textContent = "¶ text";
     else if (s.type === "quote") thumb.textContent = "❝ quote";
     else thumb.textContent = "photo";
+    // click the thumbnail to fast-forward the preview to this exact slide
+    thumb.style.cursor = "pointer";
+    thumb.title = "▶ Preview from this slide";
+    thumb.addEventListener("click", () => previewAt(i));
     wrap.appendChild(thumb);
 
     const body = document.createElement("div");
@@ -597,6 +601,15 @@
   function openFullPreview() {
     localStorage.setItem("slideshow_preview", JSON.stringify(buildMedia()));
     window.open("index.html?preview=1&t=" + Date.now(), "_blank");
+  }
+
+  // Jump the preview straight to slide i (editor index == player index).
+  function previewAt(i) {
+    if (!ensureApplied()) return;
+    localStorage.setItem("slideshow_preview", JSON.stringify(buildMedia()));
+    const url = "index.html?preview=1&slide=" + i + "&t=" + Date.now();
+    if ($(".preview-pane").offsetParent === null) window.open(url, "_blank"); // mobile: full-screen
+    else $("#pvFrame").src = url;                                            // desktop: inline pane
   }
   $("#btnPvRefresh").addEventListener("click", () => { if (ensureApplied()) refreshPreview(); });
   // On mobile the inline preview pane is hidden (offsetParent === null),

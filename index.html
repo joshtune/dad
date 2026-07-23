@@ -217,7 +217,9 @@
   let playing = true, timer = null, started = false;
   let musicEnabled = false, muted = false;
   const PHOTO_DEFAULT = 7, SECTION_DEFAULT = 4.5, TEXT_DEFAULT = 10;
-  const PREVIEW = new URLSearchParams(location.search).get("preview") === "1";
+  const PARAMS = new URLSearchParams(location.search);
+  const PREVIEW = PARAMS.get("preview") === "1";
+  const START_AT = (() => { const n = parseInt(PARAMS.get("slide"), 10); return Number.isFinite(n) && n >= 0 ? n : 0; })();
 
   async function load() {
     if (PREVIEW) {
@@ -480,7 +482,7 @@
     initAudioGraph();                               // must happen inside the user gesture
     if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
     setPlaying(true);
-    render(0);                                      // render → syncMusic starts the first track
+    render(START_AT);                               // ?slide=N fast-forwards; render → syncMusic picks the right track
   }
 
   function showMessage(h, b) { $("#msgHeading").textContent = h; $("#msgBody").textContent = b || ""; $("#message").classList.add("show"); }
