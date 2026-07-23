@@ -376,7 +376,7 @@
       el.onended = () => { if (playing) next_(); };
       el.onerror = () => { next.innerHTML = ""; next.appendChild(buildCard("", "Video unavailable", slide.url)); scheduleCard(); };
     } else if (slide.type === "section") {
-      el = buildCard("Chapter", slide.title, slide.subtitle);
+      el = buildCard("", slide.title, slide.subtitle);
       if (slide.body && slide.body.length) {         // optional chapter copy
         const b = document.createElement("div"); b.className = "body";
         slide.body.forEach(line => { const p = document.createElement("p"); p.textContent = line || ""; b.appendChild(p); });
