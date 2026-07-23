@@ -146,568 +146,621 @@
     },
     {
       "type": "section",
-      "title": "A Life in Pictures",
-      "subtitle": "Memories Through the Years"
+      "title": "School Years",
+      "subtitle": "",
+      "music": ""
     },
     {
       "type": "photo",
-      "url": "images/photo-001.jpg"
+      "url": "images/school-001.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-002.jpg"
+      "url": "images/school-002.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-003.jpg"
+      "url": "images/school-003.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-004.jpg"
+      "url": "images/school-004.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-005.jpg"
+      "url": "images/school-005.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-006.jpg"
+      "url": "images/school-006.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-007.jpg"
+      "url": "images/school-007.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-008.jpg"
+      "url": "images/school-008.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-009.jpg"
+      "url": "images/school-009.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-010.jpg"
+      "url": "images/school-010.jpg"
     },
     {
+      "type": "section",
+      "title": "Family",
+      "subtitle": "",
+      "music": ""
+    },
+    {
+      "type": "photo",
+      "url": "images/family-001.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/family-002.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/family-003.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/family-004.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/family-005.jpg"
+    },
+    {
       "type": "photo",
-      "url": "images/photo-011.jpg"
+      "url": "images/family-006.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-012.jpg"
+      "url": "images/family-007.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-013.jpg"
+      "url": "images/family-008.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-014.jpg"
+      "url": "images/family-009.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-015.jpg"
+      "url": "images/family-010.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-016.jpg"
+      "url": "images/family-011.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-017.jpg"
+      "url": "images/family-012.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-018.jpg"
+      "url": "images/family-013.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-019.jpg"
+      "url": "images/family-014.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-020.jpg"
+      "url": "images/family-015.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-021.jpg"
+      "url": "images/family-016.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-022.jpg"
+      "url": "images/family-017.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-023.jpg"
+      "url": "images/family-018.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-024.jpg"
+      "url": "images/family-019.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-025.jpg"
+      "url": "images/family-020.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-026.jpg"
+      "url": "images/family-021.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-027.jpg"
+      "url": "images/family-022.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-028.jpg"
+      "url": "images/family-023.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-029.jpg"
+      "url": "images/family-024.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-030.jpg"
+      "url": "images/family-025.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-031.jpg"
+      "url": "images/family-026.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-032.jpg"
+      "url": "images/family-027.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-033.jpg"
+      "url": "images/family-028.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-034.jpg"
+      "url": "images/family-029.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-035.jpg"
+      "url": "images/family-030.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-036.jpg"
+      "url": "images/family-031.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-037.jpg"
+      "url": "images/family-032.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-038.jpg"
+      "url": "images/family-033.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-039.jpg"
+      "url": "images/family-034.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-040.jpg"
+      "url": "images/family-035.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-041.jpg"
+      "url": "images/family-036.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-042.jpg"
+      "url": "images/family-037.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-043.jpg"
+      "url": "images/family-038.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-044.jpg"
+      "url": "images/family-039.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-045.jpg"
+      "url": "images/family-040.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-046.jpg"
+      "url": "images/family-041.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-047.jpg"
+      "url": "images/family-042.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-048.jpg"
+      "url": "images/family-043.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-049.jpg"
+      "url": "images/family-044.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-050.jpg"
+      "url": "images/family-045.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-051.jpg"
+      "url": "images/family-046.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-052.jpg"
+      "url": "images/family-047.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-053.jpg"
+      "url": "images/family-048.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-054.jpg"
+      "url": "images/family-049.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-055.jpg"
+      "url": "images/family-050.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-056.jpg"
+      "url": "images/family-051.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-057.jpg"
+      "url": "images/family-052.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-058.jpg"
+      "url": "images/family-053.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-059.jpg"
+      "url": "images/family-054.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-060.jpg"
+      "url": "images/family-055.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-061.jpg"
+      "url": "images/family-056.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-062.jpg"
+      "url": "images/family-057.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-063.jpg"
+      "url": "images/family-058.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-064.jpg"
+      "url": "images/family-059.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-065.jpg"
+      "url": "images/family-060.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-066.jpg"
+      "url": "images/family-061.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-067.jpg"
+      "url": "images/family-062.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-068.jpg"
+      "url": "images/family-063.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-069.jpg"
+      "url": "images/family-064.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-070.jpg"
+      "url": "images/family-065.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-071.jpg"
+      "url": "images/family-066.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-072.jpg"
+      "url": "images/family-067.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-073.jpg"
+      "url": "images/family-068.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-074.jpg"
+      "url": "images/family-069.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-075.jpg"
+      "url": "images/family-070.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/family-071.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/family-072.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/family-073.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/family-074.jpg"
+    },
+    {
+      "type": "photo",
+      "url": "images/family-075.jpg"
+    },
+    {
+      "type": "section",
+      "title": "Church Service",
+      "subtitle": "",
+      "music": ""
     },
     {
       "type": "photo",
-      "url": "images/photo-076.jpg"
+      "url": "images/church-001.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-077.jpg"
+      "url": "images/church-002.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-078.jpg"
+      "url": "images/church-003.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-079.jpg"
+      "url": "images/church-004.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-080.jpg"
+      "url": "images/church-005.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-081.jpg"
+      "url": "images/church-006.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-082.jpg"
+      "url": "images/church-007.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-083.jpg"
+      "url": "images/church-008.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-084.jpg"
+      "url": "images/church-009.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-085.jpg"
+      "url": "images/church-010.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-086.jpg"
+      "url": "images/church-011.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-087.jpg"
+      "url": "images/church-012.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-088.jpg"
+      "url": "images/church-013.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-089.jpg"
+      "url": "images/church-014.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-090.jpg"
+      "url": "images/church-015.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-091.jpg"
+      "url": "images/church-016.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-092.jpg"
+      "url": "images/church-017.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-093.jpg"
+      "url": "images/church-018.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-094.jpg"
+      "url": "images/church-019.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-095.jpg"
+      "url": "images/church-020.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-096.jpg"
+      "url": "images/church-021.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-097.jpg"
+      "url": "images/church-022.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-098.jpg"
+      "url": "images/church-023.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-099.jpg"
+      "url": "images/church-024.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-100.jpg"
+      "url": "images/church-025.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-101.jpg"
+      "url": "images/church-026.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-102.jpg"
+      "url": "images/church-027.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-103.jpg"
+      "url": "images/church-028.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-104.jpg"
+      "url": "images/church-029.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-105.jpg"
+      "url": "images/church-030.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-106.jpg"
+      "url": "images/church-031.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-107.jpg"
+      "url": "images/church-032.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-108.jpg"
+      "url": "images/church-033.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-109.jpg"
+      "url": "images/church-034.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-110.jpg"
+      "url": "images/church-035.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-111.jpg"
+      "url": "images/church-036.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-112.jpg"
+      "url": "images/church-037.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-113.jpg"
+      "url": "images/church-038.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-114.jpg"
+      "url": "images/church-039.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-115.jpg"
+      "url": "images/church-040.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-116.jpg"
+      "url": "images/church-041.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-117.jpg"
+      "url": "images/church-042.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-118.jpg"
+      "url": "images/church-043.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-119.jpg"
+      "url": "images/church-044.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-120.jpg"
+      "url": "images/church-045.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-121.jpg"
+      "url": "images/church-046.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-122.jpg"
+      "url": "images/church-047.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-123.jpg"
+      "url": "images/church-048.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-124.jpg"
+      "url": "images/church-049.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-125.jpg"
+      "url": "images/church-050.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-126.jpg"
+      "url": "images/church-051.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-127.jpg"
+      "url": "images/church-052.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-128.jpg"
+      "url": "images/church-053.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-129.jpg"
+      "url": "images/church-054.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-130.jpg"
+      "url": "images/church-055.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-131.jpg"
+      "url": "images/church-056.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-132.jpg"
+      "url": "images/church-057.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-133.jpg"
+      "url": "images/church-058.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-134.jpg"
+      "url": "images/church-059.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-135.jpg"
+      "url": "images/church-060.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-136.jpg"
+      "url": "images/church-061.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-137.jpg"
+      "url": "images/church-062.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-138.jpg"
+      "url": "images/church-063.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-139.jpg"
+      "url": "images/church-064.jpg"
     },
     {
       "type": "photo",
-      "url": "images/photo-140.jpg"
+      "url": "images/church-065.jpg"
     }
   ],
   "end": {
